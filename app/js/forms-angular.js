@@ -17,15 +17,15 @@ var fng = angular.module( 'formsAngular'
 
 fng.run(['tele', function (tele) {
     tele.routes( 'form', 'fng/', [
-        { path: '/analyse/:model/:reportSchemaName',   route: { templateUrl: 'partials/base-analysis.html'   }},
-        { path: '/analyse/:model',                     route: { templateUrl: 'partials/base-analysis.html'   }},
-        { path: '/:model/:id/edit',                    route: { templateUrl: 'partials/base-edit.html'       }},
-        { path: '/:model/new',                         route: { templateUrl: 'partials/base-edit.html'       }},
-        { path: '/:model',                             route: { templateUrl: 'partials/base-list.html'       }},
-        { path: '/:model/:form/:id/edit',              route: { templateUrl: 'partials/base-edit.html'       }},
-        { path: '/:model/:form/new',                   route: { templateUrl: 'partials/base-edit.html'       }},
-        { path: '/:model/:form',                       route: { templateUrl: 'partials/base-list.html'       }},
-        { path: '/schema/:schemaName',                 route: { templateUrl: 'partials/schemaView.html'      }},
+        { path: '/analyse/:modelName/:reportSchemaName', route: { templateUrl: 'partials/base-analysis.html'   }},
+        { path: '/analyse/:modelName',                   route: { templateUrl: 'partials/base-analysis.html'   }},
+        { path: '/:modelName/:id/edit',                  route: { templateUrl: 'partials/base-edit.html'       }},
+        { path: '/:modelName/new',                       route: { templateUrl: 'partials/base-edit.html'       }},
+        { path: '/:modelName',                           route: { templateUrl: 'partials/base-list.html'       }},
+        { path: '/:modelName/:formName/:id/edit',        route: { templateUrl: 'partials/base-edit.html'       }},
+        { path: '/:modelName/:formName/new',             route: { templateUrl: 'partials/base-edit.html'       }},
+        { path: '/:modelName/:formName',                 route: { templateUrl: 'partials/base-list.html'       }},
+        { path: '/schema/:schemaName',                   route: { templateUrl: 'partials/schemaView.html'      }},
     ]);
 
     tele.routes( 'error', 'oops/', [

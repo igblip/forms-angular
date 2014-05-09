@@ -4,15 +4,16 @@ var fng = angular.module('formsAngular');
 
 fng.controller( 'AnalysisCtrl',
 [
-    '$locationParse', '$filter', '$scope', '$http', 'tele', '$routeParams'
+    '$scope', '$http', '$routeParams', '$filter', 'tele'
 ,
-function ($locationParse, $filter, $scope, $http, tele, $routeParams) {
+function ($scope, $http, $routeParams, $filter, tele) {
 
     var firstTime = true,
         pdfPlugIn = new ngGridPdfExportPlugin({inhibitButton:true}),
         csvPlugIn = new ngGridCsvExportPlugin({inhibitButton:true});
 
     angular.extend($scope, $routeParams);
+
     $scope.reportSchema = {};
     $scope.gridOptions = {
         columnDefs : 'reportSchema.columnDefs',
@@ -126,7 +127,7 @@ function ($locationParse, $filter, $scope, $http, tele, $routeParams) {
 
     $scope.refreshQuery = function() {
 
-        var apiCall = '/api/report/' + $scope.model
+        var apiCall = '/api/report/' + $scope.modelName
             ,connector = '?';
         if ($scope.reportSchemaName) {
             apiCall += '/'+$scope.reportSchemaName
@@ -161,7 +162,7 @@ function ($locationParse, $filter, $scope, $http, tele, $routeParams) {
             if (data.success) {
                 $scope.report = data.report;
                 $scope.reportSchema = data.schema;
-                $scope.reportSchema.title = $scope.reportSchema.title || $scope.model;
+                $scope.reportSchema.title = $scope.reportSchema.title || $scope.modelName;
 
                 if (firstTime) {
                     firstTime = false;

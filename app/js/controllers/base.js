@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller( 'BaseCtrl',
 [                                                   // $data is a hacked up 'global' and must die
-    '$scope', '$routeParams', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'tele'
+    '$scope', '$routeParams', '$filter', '$data', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'tele'
 ,
-function ($scope, $routeParams, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, tele) {
+function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsService, SchemasService, tele) {
 
     var master = {};
     var fngInvalidRequired = 'fng-invalid-required';
@@ -36,9 +36,17 @@ function ($scope, $routeParams, $filter, $data, $locationParse, $modal, $window,
     $scope.dataDependencies = {};
     $scope.select2List = [];
 
-    //angular.extend($scope, $locationParse($location.$$path));
+    //angular.extend($scope, $locationParse($location.path()));
 
-//    $scope.formPlusSlash = $scope.formName ? $scope.formName + '/' : '';
+    // $scope.index = true/false;
+    // $scope.newRecord = true/false;
+    // $scope.analyse = true/false;
+
+
+    $scope.modelName = $routeParams.modelName;
+    $scope.formName  = $routeParams.formName;
+    $scope.id        = $routeParams.id;
+
     $scope.modelNameDisplay = sharedStuff.modelNameDisplay || $filter('titleCase')($scope.modelName);
 
     // load up the schema

@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller('NavCtrl',
 [
-    '$scope', '$data', '$filter', '$locationParse', '$controller', 'tele'
+    '$scope', '$data', '$filter', '$routeParams', '$controller', 'tele'
 ,
-function ($scope, $data, $filter, $locationParse, $controller, tele) {
+function ($scope, $data, $filter, $routeParams, $controller, tele) {
 
     $scope.items = [];
 
@@ -55,7 +55,8 @@ function ($scope, $data, $filter, $locationParse, $controller, tele) {
 
     $scope.$on('$locationChangeSuccess', function (event, newUrl, oldUrl) {
 
-        $scope.routing = $locationParse(tele.path());
+        $scope.routing = $routeParams;
+        $scope.routing.analyse = $scope.routing.id ? true : false;
 
         $scope.items = [];
 
