@@ -17,9 +17,9 @@ dist
 
 app/e2etest
 app/bower_components
-app/code
 app/partials/get-started.html
 app/demo/css
+app/demo/code
 app/css
 docs
 

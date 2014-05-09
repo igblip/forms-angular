@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller('NavCtrl',
 [
-    '$scope', '$data', '$location', '$filter', '$locationParse', '$controller', 'urlService'
+    '$scope', '$data', '$filter', '$locationParse', '$controller', 'tele'
 ,
-function ($scope, $data, $location, $filter, $locationParse, $controller, urlService) {
+function ($scope, $data, $filter, $locationParse, $controller, tele) {
 
     $scope.items = [];
 
@@ -55,7 +55,7 @@ function ($scope, $data, $location, $filter, $locationParse, $controller, urlSer
 
     $scope.$on('$locationChangeSuccess', function (event, newUrl, oldUrl) {
 
-        $scope.routing = $locationParse($location.$$path);
+        $scope.routing = $locationParse(tele.path());
 
         $scope.items = [];
 
@@ -124,8 +124,11 @@ function ($scope, $data, $location, $filter, $locationParse, $controller, urlSer
         return $scope.items[index].isHidden ? $scope.items[index].isHidden() : false;
     };
 
+    $scope.tele = tele;
+
     $scope.buildUrl = function(path) {
-        return urlService.buildUrl(path);
+        return tele.link('demo', path);
+        //return urlService.buildUrl(path);
     }
 
 }]);

@@ -102,7 +102,7 @@ var copySchemas = function () {
     var cmd = [
         'cp',
         path.join(__dirname, '../server/models/*'),
-        path.join(__dirname, '../app/code/')
+        path.join(__dirname, '../app/demo/code/')
     ].join(' ');
 
     console.log(chalk.cyan('Copying schemas using command "%s"'), cmd);
@@ -208,10 +208,6 @@ slurpModelsFrom('models/*.js')
         console.log(error);
     })
     .then(function () {
-        // If you want to use HTML5Mode uncomment the section below and modify
-        // app/demo.js so that the call to urlService.setOptions includes {html5Mode: true}
-        // app.configure(useHtml5Mode);
-
         addStatics(app);
         copySchemas();
         app.use(errorHandler(config.errorConfig));
@@ -252,45 +248,3 @@ slurpModelsFrom('models/*.js')
 app.listen(config.port);
 console.log(chalk.cyan('Express server listening on port %d in %s mode'), config.port, env);
 console.log(chalk.cyan('Attached to database %s'), config.db);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

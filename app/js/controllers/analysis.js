@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller( 'AnalysisCtrl',
 [
-    '$locationParse', '$filter', '$scope', '$http', '$location', '$routeParams'
+    '$locationParse', '$filter', '$scope', '$http', 'tele', '$routeParams'
 ,
-function ($locationParse, $filter, $scope, $http, $location, $routeParams) {
+function ($locationParse, $filter, $scope, $http, tele, $routeParams) {
 
     var firstTime = true,
         pdfPlugIn = new ngGridPdfExportPlugin({inhibitButton:true}),
@@ -151,11 +151,11 @@ function ($locationParse, $filter, $scope, $http, $location, $routeParams) {
                 }
             }
         } else {
-            // take params of the URL
-            var query = $location.$$url.match(/\?.*/);
-            if (query) {
-                apiCall += connector + query[0].slice(1)
-            }
+            // take params off the URL
+            //var query = $location.$$url.match(/\?.*/);
+            //if (query) {
+            //    apiCall += connector + query[0].slice(1)
+            //}
         }
         $http.get(apiCall).success(function (data) {
             if (data.success) {
@@ -232,12 +232,10 @@ function ($locationParse, $filter, $scope, $http, $location, $routeParams) {
             }
         }).error(function (err) {
                 console.log(JSON.stringify(err));
-                $location.path("/404");
+                tele.path('error', [404]);
              });
     };
 
     $scope.refreshQuery();
 
 }]);
-
-

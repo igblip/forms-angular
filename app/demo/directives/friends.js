@@ -4,9 +4,9 @@ var demo = angular.module('myDemoApp');
 
 demo.controller( 'FriendCtrl',
 [
-    '$scope', '$routeParams', '$location', '$http'
+    '$scope', '$routeParams', '$http'
 ,
-function($scope, $routeParams, $location, $http) {
+function($scope, $routeParams, $http) {
     $scope.frdShowAdd = false;
     $scope.frdNewFriend = {};
 
@@ -16,14 +16,15 @@ function($scope, $routeParams, $location, $http) {
     };
 
     $scope.frdShowDetails = function (friend) {
-        $http.get('/api/a_unadorned_mongoose/' + friend.friend).success(function (data) {
-            if (data && data.success != false) {
-                $scope.frdPopupName = data.forename + ' ' + data.surname;
-                $scope.frdPopupPhone = data.phone;
-            } else {
-                $scope.frdPopupName = 'This friend does not exist - someone may have deleted the record';
-            }
-        }).error(function () {
+        $http.get('/api/a_unadorned_mongoose/' + friend.friend)
+            .success(function (data) {
+                if (data && data.success != false) {
+                    $scope.frdPopupName = data.forename + ' ' + data.surname;
+                    $scope.frdPopupPhone = data.phone;
+                } else {
+                    $scope.frdPopupName = 'This friend does not exist - someone may have deleted the record';
+                }
+            }).error(function () {
                 $scope.frdPopupName = 'Error reading friend details';
                 $scope.frdPopupPhone = 'Please try again';
             });

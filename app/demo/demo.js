@@ -2,26 +2,31 @@
 
 var myDemoApp = angular.module('myDemoApp', ['formsAngular']);
 
-myDemoApp.config(['formRoutesProvider', function (formRoutes) {
-        formRoutes.setRoutes([
-            {route:'/index', options:{templateUrl: 'partials/landing-page.html'}},
-            {route:'/get-started', options:{templateUrl: 'partials/get-started.html'}},
-            {route:'/forms', options:{templateUrl: 'partials/forms.html'}},
-            {route:'/schemas', options:{templateUrl: 'partials/schemas.html'}},
-            {route:'/reporting', options:{templateUrl: 'partials/reporting.html'}},
-            {route:'/more', options:{templateUrl: 'partials/more.html'}},
-            {route:'/in-the-wild', options:{templateUrl: 'partials/in-the-wild.html'}},
-            {route:'/examples', options:{templateUrl: 'partials/examples.html'}},
-            {route:'/api-docs', options:{templateUrl: 'partials/api-docs.html'}},
-            {route:'/404', options:{templateUrl: 'partials/404.html'}},
-            {route:'/z_custom_form/new', options:{templateUrl: 'partials/custom-new.html'}},            // example view override
-            {route:'/z_custom_form/:id/edit', options:{templateUrl: 'partials/custom-edit.html'}},      // example view override
-            {route:'/z_custom_form/:form/new', options:{templateUrl: 'partials/custom-new.html'}},      // example view override with specified form content
-            {route:'/z_custom_form/:form/:id/edit', options:{templateUrl: 'partials/custom-edit.html'}} // example view override with specified form content
-        ], '/index');
+
+myDemoApp.config(['teleProvider', function (teleProvider) {
+    teleProvider.html5Mode(false);
+    teleProvider.hashPrefix('!');
 }]);
 
 
-formsAngular.config(['urlServiceProvider', function (urlServiceProvider) {
-    urlServiceProvider.setOptions({html5Mode: false, hashPrefix: '!'});
+myDemoApp.run(['tele', function (tele) {
+
+    tele.routes( 'demo', 'demo/', [
+        { path: '/index',                           route: {templateUrl: 'partials/landing-page.html'} },
+        { path: '/get-started',                     route: {templateUrl: 'partials/get-started.html' } },
+        { path: '/forms',                           route: {templateUrl: 'partials/forms.html'       } },
+        { path: '/schemas',                         route: {templateUrl: 'partials/schemas.html'     } },
+        { path: '/reporting',                       route: {templateUrl: 'partials/reporting.html'   } },
+        { path: '/more',                            route: {templateUrl: 'partials/more.html'        } },
+        { path: '/in-the-wild',                     route: {templateUrl: 'partials/in-the-wild.html' } },
+        { path: '/examples',                        route: {templateUrl: 'partials/examples.html'    } },
+        { path: '/api-docs',                        route: {templateUrl: 'partials/api-docs.html'    } },
+        { path: '/z_custom_form/new',               route: {templateUrl: 'partials/custom-new.html'  } },
+        { path: '/z_custom_form/:id/edit',          route: {templateUrl: 'partials/custom-edit.html' } },
+        { path: '/z_custom_form/:form/new',         route: {templateUrl: 'partials/custom-new.html'  } },
+        { path: '/z_custom_form/:form/:id/edit',    route: {templateUrl: 'partials/custom-edit.html' } }
+    ]);
+
+    tele.defaultRoute('/demo/index');
+
 }]);

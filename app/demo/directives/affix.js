@@ -5,9 +5,9 @@ var demo = angular.module('myDemoApp');
 
 demo.directive( 'affix',
 [
-    '$compile', '$location'
+    '$compile'
 ,
-function($compile, $location) {
+function($compile) {
     return {
         restrict: 'E',
         replace: true,
@@ -132,13 +132,3 @@ function () {
         }
     };
 }]);
-
-
-
-
-
-
-
-
-
-

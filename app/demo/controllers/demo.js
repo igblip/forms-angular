@@ -4,14 +4,12 @@ var demo = angular.module('myDemoApp');
 
 demo.controller( 'DemoCtrl',
 [
-'$scope', '$location', '$anchorScroll'
+'$scope', '$anchorScroll'
 ,
-function($scope, $location, $anchorScroll) {
+function($scope, $anchorScroll) {
 
     $scope.scrollToSection = function(id) {
-        $location.hash(id);
         $anchorScroll();
     };
 
 }]);
-

@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller( 'BaseCtrl',
 [                                                   // $data is a hacked up 'global' and must die
-    '$scope', '$routeParams', '$location', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'urlService'
+    '$scope', '$routeParams', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'tele'
 ,
-function ($scope, $routeParams, $location, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, urlService) {
+function ($scope, $routeParams, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, tele) {
 
     var master = {};
     var fngInvalidRequired = 'fng-invalid-required';
@@ -36,7 +36,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
     $scope.dataDependencies = {};
     $scope.select2List = [];
 
-    angular.extend($scope, $locationParse($location.$$path));
+    //angular.extend($scope, $locationParse($location.$$path));
 
 //    $scope.formPlusSlash = $scope.formName ? $scope.formName + '/' : '';
     $scope.modelNameDisplay = sharedStuff.modelNameDisplay || $filter('titleCase')($scope.modelName);
@@ -78,14 +78,14 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
             }
         })
         .error(function () {
-            $location.path("/404");
+            tele.path('error', [404]);
         });
 
     var readRecord = function () {
         SubmissionsService.readRecord($scope.modelName, $scope.id)
             .success(function (data) {
                 if (data.success === false) {
-                    $location.path("/404");
+                    tele.path('error', [404]);
                 }
                 allowLocationChange = false;
                 $scope.phase = 'reading';
@@ -94,7 +94,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                 }
                 processServerData(data);
             }).error(function () {
-                $location.path("/404");
+                tele.path('error', [404]);
             });
     };
 
@@ -223,7 +223,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                                     SubmissionsService.getListAttributes(mongooseOptions.ref, theId)
                                         .success(function (data) {
                                             if (data.success === false) {
-                                                $location.path("/404");
+                                                tele.path('error', [404]);
                                             }
                                             var display = {id: theId, text: data.list};
                                             setData(master, formInstructions.name, element, display);
@@ -239,7 +239,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                                                 modelController.$pristine = true;
                                             }
                                         }).error(function () {
-                                            $location.path("/404");
+                                            tele.path('error', [404]);
                                         });
                                     // } else {
                                     // throw new Error('select2 initSelection called without a value');
@@ -775,26 +775,6 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                 }
             }
         }
-        //        //if a hash is defined then make that the selected tab is displayed
-        //        if ($scope.tabs.length > 0 && $location.hash()) {
-        //            var tab = _.find($scope.tabs, function (atab) {
-        //                return atab.title === $location.hash();
-        //            });
-        //
-        //            if (tab) {
-        //                for (var i = 0; i < $scope.tabs.length; i++) {
-        //                    $scope.tabs[i].active = false;
-        //                }
-        //                tab.active = true;
-        //            }
-        //        }
-        //
-        //        //now add a hash for the active tab if none exists
-        //        if ($scope.tabs.length > 0 && !$location.hash()) {
-        //            console.log($scope.tabs[0]['title'])
-        //            $location.hash($scope.tabs[0]['title']);
-        //        }
-
         if (destList && destList.length === 0) {
             handleEmptyList(description, destList, destForm, source);
         }
@@ -819,7 +799,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                     if (options.redirect) {
                         $window.location = options.redirect
                     } else {
-                        $location.path( urlService.editRecordPath(modelName, $scope.formName, data._id) );
+                        tele.path('form', [modelName, $scope.formName, data._id, 'edit']);
                     }
                 } else {
                     showError(data);
@@ -859,7 +839,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                 if (typeof $scope.dataEventFunctions.onAfterDelete === "function") {
                     $scope.dataEventFunctions.onAfterDelete(master);
                 }
-                $location.path('/' + modelName);
+                tele.path('form', [modelName]);
             });
     };
 
@@ -924,7 +904,7 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
     //----------------------------------------------------------------------------------------
     // used in partials/base-list.html
     $scope.generateEditUrl = function(obj) {
-        return urlService.editRecordUrl($scope.modelName, $scope.formName, obj._id);
+        return tele.link('form', [$scope.modelName, $scope.formName, obj._id]);
     };
 
     // used in partials/base-list.html and partials/base-edit.html
@@ -1038,7 +1018,8 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
                 }
             })
             .error(function () {
-                $location.path("/404");
+                tele.path('error', [404]);
+
             });
     };
 
@@ -1066,8 +1047,8 @@ function ($scope, $routeParams, $location, $filter, $data, $locationParse, $moda
     };
 
     $scope.new = function () {
-        $location.search("");
-        $location.path( urlService.newRecordPath($scope.modelName, $scope.formName) );
+        //$location.search("");
+        tele.path('form', [$scope.modelName, $scope.formName]);
     };
 
     $scope.delete = function () {
@@ -1207,59 +1188,3 @@ function ($scope, $modalInstance) {
         $modalInstance.dismiss('cancel');
     };
 }]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // unused
-    // $scope.disabledText = function (localStyling) {
-    //     var text = "";
-    //     if ($scope.isSaveDisabled) {
-    //         text = "This button is only enabled when the form is complete and valid.  Make sure all required inputs are filled in. " + localStyling
-    //     }
-    //     return text;
-    // };
-
-    // $scope.add = function (fieldName, $event) {
-    //     var arrayField;
-    //     var fieldParts = fieldName.split('.');
-    //     arrayField = $scope.record;
-    //     for (var i = 0, l = fieldParts.length; i < l; i++) {
-    //         if (!arrayField[fieldParts[i]]) {
-    //             if (i === l - 1) {
-    //                 arrayField[fieldParts[i]] = [];
-    //             } else {
-    //                 arrayField[fieldParts[i]] = {};
-    //             }
-    //         }
-    //         arrayField = arrayField[fieldParts[i]];
-    //     }
-    //     arrayField.push({});
-    //     setFormDirty($event);
-    // };
-
-    // // Remove an element from an array
-    // $scope.remove = function (fieldName, value, $event) {
-    //     var fieldParts = fieldName.split('.');
-    //     var arrayField = $scope.record;
-    //     for (var i = 0, l = fieldParts.length; i < l; i++) {
-    //         arrayField = arrayField[fieldParts[i]];
-    //     }
-    //     arrayField.splice(value, 1);
-    //     setFormDirty($event);
-    // };
-
-
-    // $scope.toJSON = function (obj) {
-    //     return JSON.stringify(obj, null, 2);
-    // };

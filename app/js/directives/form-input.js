@@ -21,9 +21,9 @@ var fng = angular.module('formsAngular');
 //  <input type="text" class="input-small" placeholder="Email">
 fng.directive('formInput',
 [
-    '$compile', '$rootScope', 'utils', '$filter', 'urlService'
+    '$compile', '$rootScope', 'utils', '$filter', 'tele'
 ,
-function ($compile, $rootScope, utils, $filter, urlService) {
+function ($compile, $rootScope, utils, $filter, tele) {
     return {
         restrict: 'EA',
         link: function (scope, element, attrs) {
@@ -132,7 +132,7 @@ function ($compile, $rootScope, utils, $filter, urlService) {
                         }
                         break;
                     case 'link' :
-                        value = '<a ng-href="/' + urlService.buildUrl('') + fieldInfo.ref + (fieldInfo.form ? '/' + fieldInfo.form : '') + '/{{ ' + modelString + '}}/edit">' + fieldInfo.linkText + '</a>';
+                        value = '<a ng-href="/' + tele.link('form', ['']) + fieldInfo.ref + (fieldInfo.form ? '/' + fieldInfo.form : '') + '/{{ ' + modelString + '}}/edit">' + fieldInfo.linkText + '</a>';
                         break;
                     case 'radio' :
                         value = '';

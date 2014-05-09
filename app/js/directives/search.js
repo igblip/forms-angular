@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller('SearchCtrl',
 [
-    '$scope', '$http', '$location'
+    '$scope', '$http', 'tele'
 ,
-function ($scope, $http, $location) {
+function ($scope, $http, tele) {
 
     var currentRequest = '';
 
@@ -46,7 +46,7 @@ function ($scope, $http, $location) {
 
     $scope.selectResult = function(resultNo) {
         var result = $scope.results[resultNo];
-        $location.path('/' + result.resource + '/' + result.id + '/edit');
+        tele.path('form', [result.resource, result.id, 'edit']);
     };
 
     $scope.resultClass = function(index) {
@@ -119,18 +119,3 @@ function () {
         }
     }
 ]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
