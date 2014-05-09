@@ -778,4 +778,3 @@ describe('"BaseCtrl"', function () {
     });
 
 });
-

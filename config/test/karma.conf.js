@@ -26,6 +26,7 @@ module.exports = function(config) {
             'app/bower_components/jspdf/dist/jspdf.debug.js',
             'app/bower_components/ng-ckeditor/libs/ckeditor/ckeditor.js',
             'app/bower_components/ng-ckeditor/ng-ckeditor.js',
+            'app/bower_components/telepathic/telepathic.js',
             'app/js/forms-angular.js',
             'app/js/**/*.js',
             'app/demo/demo.js',
@@ -57,7 +58,7 @@ module.exports = function(config) {
 
 
         junitReporter:  {
-            outputFile: 'test_out/unit.xml',
+            outputFile: '../test_out/unit.xml',
             suite: 'unit'
         },
         plugins: [
