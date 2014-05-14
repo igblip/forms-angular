@@ -180,16 +180,16 @@ var B;
 try {B = mongoose.model('B');} catch(e) {B = mongoose.model('B', BSchema);}
 
 // Alternative form schemas can be defined as shown below
-BSchema.statics.form = function(layout) {
+BSchema.statics.form = function(formName) {
     var formSchema = '';
-    switch (layout) {
+    switch (formName) {
         case 'justnameandpostcode' :
             // the object overrides the form object in the schema
             formSchema = {
-                surname:{label:'Family Name'},
-                'address.postcode':{},
+                surname: {label: 'Family Name'},
+                'address.postcode': {},
                 accepted: {},
-                'address.country': {hidden:false}
+                'address.country': {hidden: false}
             };
             break;
         case 'ipAddress' :   // used in testing
@@ -227,9 +227,25 @@ BSchema.statics.report = function(report) {
 
 
 module.exports = {
-    model : B                                           // pass the model in an object if you want to add options
-    , findFunc: BSchema.statics.findAccepted            // this can be used to 'pre' filter selections.
-                                                        // A common use case is to restrict a user to only see their own records
-                                                        // as described in https://groups.google.com/forum/?fromgroups=#!topic/mongoose-orm/TiR5OXR9mAM
-    , onSave: BSchema.statics.prepareSave               // a hook that can be used to add something from environment to record before update
+    model :     B,                              // pass the model in an object if you want to add options
+    findFunc:   BSchema.statics.findAccepted,   // this can be used to 'pre' filter selections.
+                                                // A common use case is to restrict a user to only see their own records
+                                                // as described in https://groups.google.com/forum/?fromgroups=#!topic/mongoose-orm/TiR5OXR9mAM
+    onSave:     BSchema.statics.prepareSave     // a hook that can be used to add something from environment to record before update
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

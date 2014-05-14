@@ -1,0 +1,422 @@
+{
+  "surname": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "surname",
+    "instance": "String",
+    "validators": [
+      [
+        null,
+        "Path `{PATH}` is required.",
+        "required"
+      ]
+    ],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "required": true,
+      "index": true,
+      "list": {}
+    },
+    "_index": true,
+    "isRequired": true,
+    "$conditionalHandlers": {}
+  },
+  "forename": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "forename",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "list": true,
+      "index": true
+    },
+    "_index": true,
+    "$conditionalHandlers": {}
+  },
+  "website": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "website",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "type": "url"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "login": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "login",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "secure": true,
+      "form": {
+        "hidden": true
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "passwordHash": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "passwordHash",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "secure": true,
+      "form": {
+        "hidden": true
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.line1": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.line1",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "label": "Address"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.line2": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.line2",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "label": null
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.line3": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.line3",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "label": null,
+        "add": "class=\"some classes here\""
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.town": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.town",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "label": "Town",
+        "placeHolder": "Post town"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.postcode": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.postcode",
+    "instance": "String",
+    "validators": [
+      [
+        null,
+        "Path `{PATH}` is invalid ({VALUE}).",
+        "regexp"
+      ]
+    ],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "match": "(GIR 0AA)|([A-Z]{1,2}[0-9][0-9A-Z]? [0-9][ABD-HJLNP-UW-Z]{2})",
+      "form": {
+        "label": "Postcode",
+        "size": "small",
+        "help": "Enter your UK postcode (for example TN2 1AA)"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.country": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "address.country",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "label": "Country",
+        "hidden": true
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "address.surveillance": {
+    "path": "address.surveillance",
+    "instance": "boolean",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "secure": true,
+      "form": {
+        "hidden": true
+      }
+    },
+    "_index": null
+  },
+  "eyeColour": {
+    "enumValues": [
+      "Blue",
+      "Brown",
+      "Green",
+      "Hazel"
+    ],
+    "regExp": null,
+    "path": "eyeColour",
+    "instance": "String",
+    "validators": [
+      [
+        null,
+        "`{VALUE}` is not a valid enum value for path `{PATH}`.",
+        "enum"
+      ]
+    ],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "enum": [
+        "Blue",
+        "Brown",
+        "Green",
+        "Hazel"
+      ],
+      "required": false,
+      "form": {
+        "placeHolder": "Select eye colour",
+        "select2": {},
+        "help": "This control has had an event handler added to it (which looks horrid - sorry!).  See post form-input generatio processing section of <a href=\"/#/forms#client-side-customisation\">home page</a> for details."
+      }
+    },
+    "_index": null,
+    "isRequired": false,
+    "$conditionalHandlers": {}
+  },
+  "sex": {
+    "enumValues": [
+      "Male",
+      "Female"
+    ],
+    "regExp": null,
+    "path": "sex",
+    "instance": "String",
+    "validators": [
+      [
+        null,
+        "`{VALUE}` is not a valid enum value for path `{PATH}`.",
+        "enum"
+      ]
+    ],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "enum": [
+        "Male",
+        "Female"
+      ],
+      "form": {
+        "type": "radio",
+        "inlineRadio": true
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "dateOfBirth": {
+    "path": "dateOfBirth",
+    "instance": "Date",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {},
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "accepted": {
+    "path": "accepted",
+    "instance": "boolean",
+    "validators": [
+      [
+        null,
+        "Path `{PATH}` is required.",
+        "required"
+      ]
+    ],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "required": true,
+      "form": {
+        "helpInline": "Did we take them?"
+      },
+      "list": {}
+    },
+    "_index": null,
+    "isRequired": true
+  },
+  "interviewScore": {
+    "path": "interviewScore",
+    "instance": "Number",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "hidden": true
+      },
+      "list": {}
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "freeText": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "freeText",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "type": "textarea",
+        "rows": 5,
+        "help": "There is some validation on this field to ensure that the word \"rude\" is not entered.  Try it to see the record level error handling."
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "resizingText": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "resizingText",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "type": "textarea",
+        "rows": "auto",
+        "help": "This field resizes thanks to the <a href=\"http://monospaced.github.io/angular-elastic/\">angular-elastic</a> module"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "formattedText": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "formattedText",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "type": "textarea",
+        "editor": "ckEditor",
+        "help": "This field uses <a href=\"http://ckeditor.com\">CKEditor</a> and the <a href=\"https://github.com/esvit/ng-ckeditor\">ng-ckeditor</a> module"
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "ipAddress": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "ipAddress",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {
+      "form": {
+        "hidden": true
+      }
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "password": {
+    "enumValues": [],
+    "regExp": null,
+    "path": "password",
+    "instance": "String",
+    "validators": [],
+    "setters": [],
+    "getters": [],
+    "options": {},
+    "_index": null,
+    "$conditionalHandlers": {}
+  },
+  "_id": {
+    "path": "_id",
+    "instance": "ObjectID",
+    "validators": [],
+    "setters": [
+      null
+    ],
+    "getters": [],
+    "options": {
+      "auto": true
+    },
+    "_index": null,
+    "$conditionalHandlers": {}
+  }
+}

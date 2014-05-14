@@ -18,72 +18,13 @@
     <link rel="stylesheet" href="/demo/css/demo.css">
     <!-- endbuild -->
 </head>
-<body ng-app="myDemoApp" ng-controller="NavCtrl" ng-keyup="globalShortcuts($event)">
+<body ng-app="myDemoApp">
 
-    <div class="visible-desktop">
-        <!-- a href="https://github.com/mchapman/forms-angular"><img src="/img/forkme_right_darkblue_121621.png" style="position: fixed; right: 0; top: 0; z-index: 1032"></a -->
-    </div>
-
-    <div class="navbar navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid" ng-cloak>
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <div class="pull-left">
-                    <a class="brandpluslogo" ng-href="{{tele.link('demo', ['index'])}}"><img src="/img/Home_icon_black.png" width="45" alt="Click on logo to go to home page"></a>
-                </div>
-                <div class="visible-desktop pull-right span2"></div>   <!-- Leave some space for github flash -->
-                <global-search class="global-search"></global-search>
-                <!-- div class="pull-right" style="padding-top: 14px;"><iframe src="http://ghbtns.com/github-btn.html?user=mchapman&repo=forms-angular&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe><iframe src="http://ghbtns.com/github-btn.html?user=mchapman&repo=forms-angular&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe></div -->
-                <div class="nav-collapse">
-                    <ul class="nav">
-                        <li><a ng-href="{{tele.link('demo', ['get-started'])}}">Get Started</a></li>
-                        <li><a ng-href="{{tele.link('demo', ['schemas'])}}">Schemas</a></li>
-                        <li><a ng-href="{{tele.link('demo', ['forms'])}}">Forms</a></li>
-                        <li><a ng-href="{{tele.link('demo', ['reporting'])}}">Reporting</a></li>
-                        <li class="dropdown"><a class="dropdown-toggle">More</a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['examples'])}}">Examples</a></li>
-                                <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['api-docs'])}}">API Documentation</a></li>
-                                <!-- li><a class="dropdown-option" href="https://github.com/mchapman/forms-angular/issues?state=open">Issues</a></li -->
-                                <!-- li><a class="dropdown-option" href="https://github.com/mchapman/forms-angular/releases">Changelog</a></li -->
-                                <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['in-the-wild'])}}">Who Uses It?</a></li>
-                            </ul>
-                        </li>
-
-                        <li ng-show="items.length > 0" class="dropdown" >
-                            <a class="dropdown-toggle">
-                                {{contextMenu}}
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="choice in items">
-                                    <a class="dropdown-option" ng-hide="isHidden($index)" ng-href="{{choice.url}}" ng-click="doClick($index)">{{choice.text}}</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <demo-nav></demo-nav>
 
     <div ng-view></div>
 
-
-    <footer class="footer">
-        <div class="container-fluid">
-            <p>Code licensed under <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-            <ul class="footer-links">
-                <!-- li><a href="https://github.com/mchapman/forms-angular/issues?state=open">Issues</a></li -->
-                <li class="muted">·</li>
-                <!-- li><a href="https://github.com/mchapman/forms-angular/releases">Changelog</a></li -->
-            </ul>
-        </div>
-    </footer>
+    <ng-include src="'partials/footer.html'"></ng-include>
 
 
     <!-- what forms-angular depends on -->
@@ -131,7 +72,8 @@
 
     <script src="/js/controllers/base.js"></script>
     <script src="/js/controllers/analysis.js"></script>
-    <script src="/js/controllers/nav.js"></script>
+    <!-- script src="/js/controllers/nav.js"></script -->
+
 
     <script src="/js/directives/form-input.js"></script>
     <script src="/js/directives/form-buttons.js"></script>
@@ -153,6 +95,7 @@
     <script src="/demo/directives/bespoke-field.js"></script>
     <script src="/demo/directives/affix.js"></script>
     <script src="/demo/directives/friends.js"></script>
+    <script src="/demo/directives/demoNav.js"></script>
 
     <script src="/demo/controllers/demo.js"></script>
 

@@ -13,40 +13,41 @@ var _ = require('underscore'),
 
 mongoose.set('debug', debug);
 
-var logTheAPICalls = function (req, res, next) {
+var logApiCall = function (req, res, next) {
     console.log('API     : ' + req.method + ' ' + req.url + '  [ ' + JSON.stringify(req.body) + ' ]');
     next();
 };
 
-var processArgs = function (options, array) {
+
+var makeArgList = function (options, array) {
     if (options.authentication) {
         array.splice(1, 0, options.authentication)
     }
     if (debug) {
-        array.splice(1, 0, logTheAPICalls)
+        array.splice(1, 0, logApiCall)
     }
     array[0] = options.urlPrefix + array[0];
     return array;
 };
+
+
 
 var DataForm = function (app, options) {
     this.app = app;
     this.options = _.extend({
         urlPrefix: '/api/'
     }, options || {});
-    this.resources = [ ];
-    this.searchFunc = async.forEach;
-    this.registerRoutes();
+    this.resources = [];
+    this.searchFunc = async.each;
 
-    this.app.get.apply(this.app, processArgs(this.options, ['search', this.searchAll()]));
+    this._registerRoutes();
+    this.app.get.apply(this.app, makeArgList(this.options, ['search', this.searchAll()]));
 };
-
-/**
- * Exporting the Class
- */
 module.exports = exports = DataForm;
 
-DataForm.prototype.getListFields = function (resource, doc) {
+
+
+DataForm.prototype._getListFields = function (resource, doc) {
     var display = ''
         , listElement = 0
         , listFields = resource.options.listFields;
@@ -65,37 +66,34 @@ DataForm.prototype.getListFields = function (resource, doc) {
 };
 
 /**
- * Registers all REST routes with the provided `app` object.
- */
-DataForm.prototype.registerRoutes = function () {
+* Registers all REST routes with the provided 'app' object.
+*/
+DataForm.prototype._registerRoutes = function () {
 
-    this.app.get.apply(this.app, processArgs(this.options, ['models', this.models()]));
+    // get the list of registered models
+    this.app.get.apply(this.app, makeArgList(this.options, ['models',                           this.models()]));
 
-    this.app.get.apply(this.app, processArgs(this.options, ['search/:resourceName', this.search()]));
+    this.app.get.apply(this.app, makeArgList(this.options, ['search/:resourceName',             this.search()]));
 
-    this.app.get.apply(this.app, processArgs(this.options, ['schema/:resourceName', this.schema()]));
-    this.app.get.apply(this.app, processArgs(this.options, ['schema/:resourceName/:formName', this.schema()]));
+    this.app.get.apply(this.app, makeArgList(this.options, ['schema/:resourceName',             this.schema()]));
+    this.app.get.apply(this.app, makeArgList(this.options, ['schema/:resourceName/:formName',   this.schema()]));
 
-    this.app.get.apply(this.app, processArgs(this.options, ['report/:resourceName', this.report()]));
-    this.app.get.apply(this.app, processArgs(this.options, ['report/:resourceName/:reportName', this.report()]));
+    this.app.get.apply(this.app, makeArgList(this.options, ['report/:resourceName',             this.report()]));
+    this.app.get.apply(this.app, makeArgList(this.options, ['report/:resourceName/:reportName', this.report()]));
 
-    this.app.all.apply(this.app, processArgs(this.options, [':resourceName', this.collection()]));
-    this.app.get.apply(this.app, processArgs(this.options, [':resourceName', this.collectionGet()]));
+    this.app.all.apply(this.app,  makeArgList(this.options, [':resourceName',                   this.collection()]));
+    this.app.get.apply(this.app,  makeArgList(this.options, [':resourceName',                   this.collectionGet()]));
+    this.app.post.apply(this.app, makeArgList(this.options, [':resourceName',                   this.collectionPost()]));
 
-    this.app.post.apply(this.app, processArgs(this.options, [':resourceName', this.collectionPost()]));
-
-    this.app.all.apply(this.app, processArgs(this.options, [':resourceName/:id', this.entity()]));
-    this.app.get.apply(this.app, processArgs(this.options, [':resourceName/:id', this.entityGet()]));
-
-    // You can POST or PUT to update data
-    this.app.post.apply(this.app, processArgs(this.options, [':resourceName/:id', this.entityPut()]));
-    this.app.put.apply(this.app, processArgs(this.options, [':resourceName/:id', this.entityPut()]));
-
-    this.app.delete.apply(this.app, processArgs(this.options, [':resourceName/:id', this.entityDelete()]));
+    this.app.all.apply(this.app,  makeArgList(this.options,   [':resourceName/:id',             this.entity()]));
+    this.app.get.apply(this.app,  makeArgList(this.options,   [':resourceName/:id',             this.entityGet()]));
+    this.app.post.apply(this.app, makeArgList(this.options,   [':resourceName/:id',             this.entityPut()]));
+    this.app.put.apply(this.app,  makeArgList(this.options,   [':resourceName/:id',             this.entityPut()]));
+    this.app.delete.apply(this.app, makeArgList(this.options, [':resourceName/:id',             this.entityDelete()]));
 
     // return the List attributes for a record - used by select2
-    this.app.all.apply(this.app, processArgs(this.options, [':resourceName/:id/list', this.entity()]));
-    this.app.get.apply(this.app, processArgs(this.options, [':resourceName/:id/list', this.entityList()]));
+    this.app.all.apply(this.app, makeArgList(this.options, [':resourceName/:id/list',           this.entity()]));
+    this.app.get.apply(this.app, makeArgList(this.options, [':resourceName/:id/list',           this.entityList()]));
 };
 
 /*
@@ -115,18 +113,29 @@ DataForm.prototype.addResource = function (resource_name, model, options) {
         options: options || {}
     };
 
-    if (typeof model === "function") {
+    if (typeof model === 'function') {
         resource.model = model;
     } else {
         resource.model = model.model;
         for (var prop in model) {
-            if (model.hasOwnProperty(prop) && prop !== "model") {
+            if (model.hasOwnProperty(prop) && prop !== 'model') {
                 resource.options[prop] = model[prop];
             }
         }
     }
 
-    extend(resource.options, this.preprocess(resource.model.schema.paths, null));
+    if (resource_name === 'b_using_options') {
+        console.log('Before: ');
+        console.log(resource.options);
+    }
+
+    extend( resource.options, this.preprocess(resource.model.schema.paths, null) );
+
+    if (resource_name === 'b_using_options') {
+        console.log('After: ');
+        console.log(resource.options);
+    }
+
 
     if (resource.options.searchImportance) {
         this.searchFunc = async.forEachSeries;
@@ -140,13 +149,95 @@ DataForm.prototype.addResource = function (resource_name, model, options) {
     }
 };
 
+/**
+* Populates a resource's options object with all of the path information from the mongoose model.
+* If the formSchema is supplied, then the the model's form() methis is called, which should return
+* an object indicating the fields to display. The formName is probably more appropriately called a
+* 'view' into the model.
+* See models/b_using_options.js and models/b_using_options.json as examples.
+*/
+DataForm.prototype.preprocess = function (paths, formSchema) {
+    var outPath = {},
+        hiddenFields = [],
+        listFields = [];
+
+    for (var element in paths) {
+        if (paths.hasOwnProperty(element) && element != '__v') {
+            // check for schemas
+            if (paths[element].schema) {
+                var subSchemaInfo = this.preprocess(paths[element].schema.paths);
+                outPath[element] = {schema: subSchemaInfo.paths};
+                if (paths[element].options.form) {
+                    outPath[element].options = {form: extend(true, {}, paths[element].options.form)};
+                }
+            } else {
+                // check for arrays
+                var realType = paths[element].caster ? paths[element].caster : paths[element];
+                if (!realType.instance) {
+                    if (realType.options.type) {
+                        var type = realType.options.type(),
+                            typeType = typeof type;
+
+                        if (typeType === 'string') {
+                            realType.instance = (Date.parse(type) !== NaN) ? 'Date' : 'String';
+                        } else {
+                            realType.instance = typeType;
+                        }
+                    }
+                }
+                outPath[element] = extend(true, {}, paths[element]);
+                if (paths[element].options.secure) {
+                    hiddenFields.push(element);
+                }
+                if (paths[element].options.match) {
+                    outPath[element].options.match = paths[element].options.match.source;
+                }
+                if (paths[element].options.list) {
+                    listFields.push({field: element, params: paths[element].options.list})
+                }
+            }
+        }
+    }
+    if (formSchema) {
+        var vanilla = outPath;
+        outPath = {};
+        for (var fld in formSchema) {
+            if (formSchema.hasOwnProperty(fld)) {
+                if (!vanilla[fld]) {
+                    throw new Error("No such field as " + fld + ".  Is it part of a sub-doc? If so you need the bit before the period.")
+                }
+                outPath[fld] = vanilla[fld];
+                outPath[fld].options = outPath[fld].options || {};
+                for (var override in formSchema[fld]) {
+                    if (formSchema[fld].hasOwnProperty(override)) {
+                        if (!outPath[fld].options.form) {
+                            outPath[fld].options.form = {};
+                        }
+                        outPath[fld].options.form[override] = formSchema[fld][override];
+                    }
+                }
+            }
+        }
+    }
+
+    var returnObj = { paths: outPath };
+
+    if (hiddenFields.length > 0) {
+        returnObj.hide = hiddenFields;
+    }
+    if (listFields.length > 0) {
+        returnObj.listFields = listFields;
+    }
+    return returnObj;
+};
+
 DataForm.prototype.getResource = function (name) {
     return _.find(this.resources, function (resource) {
         return resource.resource_name === name;
     });
 };
 
-DataForm.prototype.internalSearch = function (req, resourcesToSearch, limit, callback) {
+DataForm.prototype._internalSearch = function (req, resourcesToSearch, limit, callback) {
     var searches = [],
         resourceCount = resourcesToSearch.length,
         url_parts = url.parse(req.url, true),
@@ -246,7 +337,7 @@ DataForm.prototype.internalSearch = function (req, resourcesToSearch, limit, cal
             // The +60 in the next line is an arbitrary safety zone for situations where items that match the string
             // in more than one index get filtered out.
             // TODO : Figure out a better way to deal with this
-            that.filteredFind(item.resource, req, null, searchDoc, item.resource.options.searchOrder, limit + 60, null, function (err, docs) {
+            that._filteredFind(item.resource, req, null, searchDoc, item.resource.options.searchOrder, limit + 60, null, function (err, docs) {
                 if (!err && docs && docs.length > 0) {
                     for (var k = 0; k < docs.length; k++) {
 
@@ -279,7 +370,7 @@ DataForm.prototype.internalSearch = function (req, resourcesToSearch, limit, cal
                                 resultObject = {
                                     id: thisId,
                                     weighting: 9999,
-                                    text: that.getListFields(item.resource, docs[k])
+                                    text: that._getListFields(item.resource, docs[k])
                                 };
                                 if (resourceCount > 1) {
                                     resultObject.resource = resultObject.resourceText = item.resource.resource_name;
@@ -312,27 +403,34 @@ DataForm.prototype.internalSearch = function (req, resourcesToSearch, limit, cal
     );
 };
 
+/**
+* Middleware, Terminus - search
+*/
 DataForm.prototype.search = function (req, res, next) {
     return _.bind(function (req, res, next) {
         if (!(req.resource = this.getResource(req.params.resourceName))) {
             return next();
         }
 
-        this.internalSearch(req, [req.resource], 10, function (resultsObject) {
+        this._internalSearch(req, [req.resource], 10, function (resultsObject) {
             res.send(resultsObject);
         });
     }, this);
 };
 
+/**
+* Middleware, Terminus - searchAll
+*/
 DataForm.prototype.searchAll = function (req, res) {
     return _.bind(function (req, res) {
-        this.internalSearch(req, this.resources, 10, function (resultsObject) {
+        this._internalSearch(req, this.resources, 10, function (resultsObject) {
             res.send(resultsObject);
         });
     }, this);
 };
 
-/*
+/**
+* Middleware, Terminus - get all models
 */
 DataForm.prototype.models = function (req, res, next) {
     var that = this;
@@ -341,7 +439,7 @@ DataForm.prototype.models = function (req, res, next) {
     };
 };
 
-DataForm.prototype.renderError = function (err, redirectUrl, req, res) {
+DataForm.prototype._renderError = function (err, redirectUrl, req, res) {
     if (typeof err === "string") {
         res.send(err)
     } else {
@@ -349,83 +447,9 @@ DataForm.prototype.renderError = function (err, redirectUrl, req, res) {
     }
 };
 
-DataForm.prototype.redirect = function (address, req, res) {
-    res.send(address);
-};
-
-DataForm.prototype.preprocess = function (paths, formSchema) {
-    var outPath = {},
-        hiddenFields = [],
-        listFields = [];
-    for (var element in paths) {
-        if (paths.hasOwnProperty(element) && element != '__v') {
-            // check for schemas
-            if (paths[element].schema) {
-                var subSchemaInfo = this.preprocess(paths[element].schema.paths);
-                outPath[element] = {schema: subSchemaInfo.paths};
-                if (paths[element].options.form) {
-                    outPath[element].options = {form: extend(true, {}, paths[element].options.form)};
-                }
-            } else {
-                // check for arrays
-                var realType = paths[element].caster ? paths[element].caster : paths[element];
-                if (!realType.instance) {
-
-                    if (realType.options.type) {
-                        var type = realType.options.type(),
-                            typeType = typeof type;
-
-                        if (typeType === "string") {
-                            realType.instance = (Date.parse(type) !== NaN) ? "Date" : "String";
-                        } else {
-                            realType.instance = typeType;
-                        }
-                    }
-                }
-                outPath[element] = extend(true, {}, paths[element]);
-                if (paths[element].options.secure) {
-                    hiddenFields.push(element);
-                }
-                if (paths[element].options.match) {
-                    outPath[element].options.match = paths[element].options.match.source;
-                }
-                if (paths[element].options.list) {
-                    listFields.push({field: element, params: paths[element].options.list})
-                }
-            }
-        }
-    }
-    if (formSchema) {
-        var vanilla = outPath;
-        outPath = {};
-        for (var fld in formSchema) {
-            if (formSchema.hasOwnProperty(fld)) {
-                if (!vanilla[fld]) {
-                    throw new Error("No such field as " + fld + ".  Is it part of a sub-doc? If so you need the bit before the period.")
-                }
-                outPath[fld] = vanilla[fld];
-                outPath[fld].options = outPath[fld].options || {};
-                for (var override in formSchema[fld]) {
-                    if (formSchema[fld].hasOwnProperty(override)) {
-                        if (!outPath[fld].options.form) {
-                            outPath[fld].options.form = {};
-                        }
-                        outPath[fld].options.form[override] = formSchema[fld][override];
-                    }
-                }
-            }
-        }
-    }
-    var returnObj = {paths: outPath};
-    if (hiddenFields.length > 0) {
-        returnObj.hide = hiddenFields;
-    }
-    if (listFields.length > 0) {
-        returnObj.listFields = listFields;
-    }
-    return returnObj;
-};
-
+/**
+* Middleware, Terminus - get a schema
+*/
 DataForm.prototype.schema = function () {
     return _.bind(function (req, res, next) {
         if (!(req.resource = this.getResource(req.params.resourceName))) {
@@ -440,6 +464,9 @@ DataForm.prototype.schema = function () {
     }, this);
 };
 
+/**
+* Middleware - get a schema
+*/
 DataForm.prototype.report = function () {
     return _.bind(function (req, res, next) {
         if (!(req.resource = this.getResource(req.params.resourceName))) {
@@ -461,7 +488,7 @@ DataForm.prototype.report = function () {
                     reportSchema = JSON.parse(urlParts.query.r);
                     break;
                 default:
-                    return self.renderError(new Error("Invalid 'r' parameter"), null, req, res, next);
+                    return self._renderError(new Error("Invalid 'r' parameter"), null, req, res, next);
             }
         } else {
             var fields = {};
@@ -484,9 +511,9 @@ DataForm.prototype.report = function () {
         extend(schemaCopy, reportSchema);
         schemaCopy.params = schemaCopy.params || [];
 
-        self.reportInternal(req, req.resource, schemaCopy, urlParts, function(err, result){
+        self._reportInternal(req, req.resource, schemaCopy, urlParts, function(err, result){
             if (err) {
-                self.renderError(err, null, req, res, next);
+                self._renderError(err, null, req, res, next);
             } else {
                 res.send(result);
             }
@@ -494,11 +521,11 @@ DataForm.prototype.report = function () {
     }, this);
 };
 
-DataForm.prototype.reportInternal = function(req, resource, schema, options, callback) {
+DataForm.prototype._reportInternal = function(req, resource, schema, options, callback) {
     var runPipeline
     self = this;
 
-    self.doFindFunc(req, resource, function(err, queryObj) {
+    self._doFindFunc(req, resource, function(err, queryObj) {
         if (err) {
             return "There was a problem with the findFunc for model";
         } else {
@@ -529,7 +556,7 @@ DataForm.prototype.reportInternal = function(req, resource, schema, options, cal
             };
 
             // Don't send the 'secure' fields
-            for (var hiddenField in self.generateHiddenFields(resource, false)) {
+            for (var hiddenField in self._generateHiddenFields(resource, false)) {
                 if (runPipeline.indexOf(hiddenField) !== -1) {
                     callback("You cannot access " + hiddenField);
                 }
@@ -631,7 +658,7 @@ DataForm.prototype.reportInternal = function(req, resource, schema, options, cal
                                                 cb(err);
                                             } else {
                                                 for (var j = 0; j < findResults.length; j++) {
-                                                    translateObject.translations[j] = {value: findResults[j]._id, display: self.getListFields(lookup, findResults[j])};
+                                                    translateObject.translations[j] = {value: findResults[j]._id, display: self._getListFields(lookup, findResults[j])};
                                                 }
                                                 cb(null, null);
                                             }
@@ -681,7 +708,7 @@ DataForm.prototype.reportInternal = function(req, resource, schema, options, cal
     });
 };
 
-DataForm.prototype.saveAndRespond = function (req, res, hidden_fields) {
+DataForm.prototype._saveAndRespond = function (req, res, hidden_fields) {
 
     var internalSave = function (doc) {
         doc.save(function (err, doc2) {
@@ -723,20 +750,18 @@ DataForm.prototype.saveAndRespond = function (req, res, hidden_fields) {
 };
 
 /**
- * All entities REST functions have to go through this first.
- */
+* Middleware - All entities REST functions have to go through this first.
+*/
 DataForm.prototype.collection = function () {
     return _.bind(function (req, res, next) {
-        if (!(req.resource = this.getResource(req.params.resourceName))) {
-            return next();
-        }
+        req.resource = this.getResource(req.params.resourceName);
         return next();
     }, this);
 };
 
 /**
- * Renders a view with the list of docs, which may be filtered by the f query parameter
- */
+* Middleware, Terminus - Renders a view with the list of docs, which may be filtered by the f query parameter
+*/
 DataForm.prototype.collectionGet = function () {
     return _.bind(function (req, res, next) {
         if (!req.resource) {
@@ -753,9 +778,9 @@ DataForm.prototype.collectionGet = function () {
 
             var self = this;
 
-            this.filteredFind(req.resource, req, aggregationParam, findParam, orderParam, limitParam, skipParam, function (err, docs) {
+            this._filteredFind(req.resource, req, aggregationParam, findParam, orderParam, limitParam, skipParam, function (err, docs) {
                 if (err) {
-                    return self.renderError(err, null, req, res, next);
+                    return self._renderError(err, null, req, res, next);
                 } else {
                     res.send(docs);
                 }
@@ -766,7 +791,7 @@ DataForm.prototype.collectionGet = function () {
     }, this);
 };
 
-DataForm.prototype.doFindFunc = function (req, resource, cb) {
+DataForm.prototype._doFindFunc = function (req, resource, cb) {
     if (resource.options.findFunc) {
         resource.options.findFunc(req, cb)
     } else {
@@ -774,10 +799,10 @@ DataForm.prototype.doFindFunc = function (req, resource, cb) {
     }
 };
 
-DataForm.prototype.filteredFind = function (resource, req, aggregationParam, findParam, sortOrder, limit, skip, callback) {
+DataForm.prototype._filteredFind = function (resource, req, aggregationParam, findParam, sortOrder, limit, skip, callback) {
 
     var that = this
-        , hidden_fields = this.generateHiddenFields(resource, false);
+        , hidden_fields = this._generateHiddenFields(resource, false);
 
     var doAggregation = function (cb) {
         if (aggregationParam) {
@@ -799,7 +824,7 @@ DataForm.prototype.filteredFind = function (resource, req, aggregationParam, fin
         if (aggregationParam && idArray.length === 0) {
             callback(null, [])
         } else {
-            that.doFindFunc(req, resource, function (err, queryObj) {
+            that._doFindFunc(req, resource, function (err, queryObj) {
                 if (err) {
                     callback(err)
                 } else {
@@ -818,6 +843,9 @@ DataForm.prototype.filteredFind = function (resource, req, aggregationParam, fin
     })
 };
 
+/**
+* Middleware, Terminus - post an entity to a collection
+*/
 DataForm.prototype.collectionPost = function () {
     return _.bind(function (req, res, next) {
         if (!req.resource) {
@@ -826,17 +854,17 @@ DataForm.prototype.collectionPost = function () {
         }
         if (!req.body) throw new Error('Nothing submitted.');
 
-        var cleansedBody = this.cleanseRequest(req);
+        var cleansedBody = this._cleanseRequest(req);
         req.doc = new req.resource.model(cleansedBody);
 
-        this.saveAndRespond(req, res);
+        this._saveAndRespond(req, res);
     }, this);
 };
 
 /**
  * Generate an object of fields to not expose
  **/
-DataForm.prototype.generateHiddenFields = function (resource, state) {
+DataForm.prototype._generateHiddenFields = function (resource, state) {
     var hidden_fields = {};
 
     if (resource.options['hide'] !== undefined) {
@@ -851,7 +879,7 @@ DataForm.prototype.generateHiddenFields = function (resource, state) {
  * Cleanse incoming data to avoid overwrite and POST request forgery
  * (name may seem weird but it was in French, so it is some small improvement!)
  */
-DataForm.prototype.cleanseRequest = function (req) {
+DataForm.prototype._cleanseRequest = function (req) {
     var req_data = req.body,
         resource = req.resource;
 
@@ -873,9 +901,8 @@ DataForm.prototype.cleanseRequest = function (req) {
 
 
 /*
- * Entity request goes there first
- * It retrieves the resource
- */
+* Middleware - Entity request goes there first. It retrieves the resource and puts it on the request as 'doc'
+*/
 DataForm.prototype.entity = function () {
     return _.bind(function (req, res, next) {
         if (!(req.resource = this.getResource(req.params.resourceName))) {
@@ -883,7 +910,7 @@ DataForm.prototype.entity = function () {
             return;
         }
 
-        var hidden_fields = this.generateHiddenFields(req.resource, false);
+        var hidden_fields = this._generateHiddenFields(req.resource, false);
         hidden_fields.__v = 0;
 
         var query = req.resource.model.findOne({ _id: req.params.id }).select(hidden_fields);
@@ -908,10 +935,8 @@ DataForm.prototype.entity = function () {
 };
 
 /**
- * Gets a single entity
- *
- * @return {Function} The function to use as route
- */
+* Middleware, Terminus - Gets a single entity
+*/
 DataForm.prototype.entityGet = function () {
     return _.bind(function (req, res, next) {
         if (!req.resource) {
@@ -921,19 +946,22 @@ DataForm.prototype.entityGet = function () {
     }, this);
 };
 
-DataForm.prototype.replaceHiddenFields = function (record, data) {
+DataForm.prototype._replaceHiddenFields = function (record, data) {
     var self = this;
-    self._replacingHiddenFields = true;
+    //self._replacingHiddenFields = true;
     _.each(data, function (value, name) {
         if (_.isObject(value)) {
-            self.replaceHiddenFields(record[name], value)
+            self._replaceHiddenFields(record[name], value)
         } else {
             record[name] = value;
         }
     });
-    delete self._replacingHiddenFields;
+    //delete self._replacingHiddenFields;
 };
 
+/**
+* Middleware, Terminus - 'Puts' a single entity for update
+*/
 DataForm.prototype.entityPut = function () {
     return _.bind(function (req, res, next) {
         if (!req.resource) {
@@ -942,7 +970,7 @@ DataForm.prototype.entityPut = function () {
         }
 
         if (!req.body) throw new Error('Nothing submitted.');
-        var cleansedBody = this.cleanseRequest(req)
+        var cleansedBody = this._cleanseRequest(req)
             , that = this;
 
         // Merge
@@ -951,18 +979,21 @@ DataForm.prototype.entityPut = function () {
         });
 
         if (req.resource.options.hide !== undefined) {
-            var hidden_fields = this.generateHiddenFields(req.resource, true);
+            var hidden_fields = this._generateHiddenFields(req.resource, true);
             hidden_fields._id = false;
             req.resource.model.findById(req.doc._id, hidden_fields, {lean: true}, function (err, data) {
-                that.replaceHiddenFields(req.doc, data);
-                that.saveAndRespond(req, res, hidden_fields);
+                that._replaceHiddenFields(req.doc, data);
+                that._saveAndRespond(req, res, hidden_fields);
             })
         } else {
-            that.saveAndRespond(req, res);
+            that._saveAndRespond(req, res);
         }
     }, this);
 };
 
+/**
+* Middleware, Terminus - Deletes a single entity
+*/
 DataForm.prototype.entityDelete = function () {
     return _.bind(function (req, res, next) {
         if (!req.resource) {
@@ -984,7 +1015,6 @@ DataForm.prototype.entityList = function () {
         if (!req.resource) {
             return next();
         }
-        return res.send({list: this.getListFields(req.resource, req.doc)});
+        return res.send({list: this._getListFields(req.resource, req.doc)});
     }, this);
 };
-

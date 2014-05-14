@@ -29,9 +29,9 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
 
     $scope.topLevelFormName = undefined;
 
-    $scope.formSchema = [];
+    $scope.formSchema = [];     // schema for the form view
     $scope.tabs = [];
-    $scope.listSchema = [];
+    $scope.listSchema = [];     // schema for the list view
     $scope.recordList = [];
     $scope.dataDependencies = {};
     $scope.select2List = [];
@@ -66,7 +66,7 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
 
                 if ($scope.id) {
                     // Going to read a record
-                    if (typeof $scope.dataEventFunctions.onBeforeRead === "function") {
+                    if (typeof $scope.dataEventFunctions.onBeforeRead === 'function') {
                         $scope.dataEventFunctions.onBeforeRead($scope.id, function (err) {
                             if (err) {
                                 showError(err);
@@ -97,7 +97,7 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
                 }
                 allowLocationChange = false;
                 $scope.phase = 'reading';
-                if (typeof $scope.dataEventFunctions.onAfterRead === "function") {
+                if (typeof $scope.dataEventFunctions.onAfterRead === 'function') {
                     $scope.dataEventFunctions.onAfterRead(data);
                 }
                 processServerData(data);
@@ -912,7 +912,7 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
     //----------------------------------------------------------------------------------------
     // used in partials/base-list.html
     $scope.generateEditUrl = function(obj) {
-        return tele.link('form', [$scope.modelName, $scope.formName, obj._id]);
+        return tele.link('form', [$scope.modelName, $scope.formName, obj._id, 'edit']);
     };
 
     // used in partials/base-list.html and partials/base-edit.html
@@ -1012,10 +1012,10 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
     $scope.scrollTheList = function () {
         SubmissionsService.getPagedAndFilteredList($scope.modelName, {
                 aggregate:  $routeParams.a,
-                find: $routeParams.f,
-                limit: $scope.page_size,
-                skip: $scope.pages_loaded * $scope.page_size,
-                order: $routeParams.o
+                find:       $routeParams.f,
+                limit:      $scope.page_size,
+                skip:       $scope.pages_loaded * $scope.page_size,
+                order:      $routeParams.o
             })
             .success(function (data) {
                 if (angular.isArray(data)) {

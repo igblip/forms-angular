@@ -103,19 +103,8 @@ fng.directive( 'globalSearch',
 function () {
     return {
         restrict: 'AE',
-        template:   '<form class="navbar-search pull-right">'+
-                    '    <div id="search-cg" class="control-group" ng-class="errorClass">'+
-                    '        <input type="text" id="searchinput" ng-model="searchTarget" class="search-query" placeholder="Ctrl+Slash to Search" ng-keyup="handleKey($event)">'+
-                    '    </div>'+
-                    '</form>'+
-                    '<div class="results-container" ng-show="results.length >= 1">'+
-                    '    <div class="search-results">'+
-                    '        <div ng-repeat="result in results">'+
-                    '            <span ng-class="resultClass($index)" ng-click="selectResult($index)">{{result.resourceText}} {{result.text}}</span>'+
-                    '        </div>'+
-                    '    <div ng-show="moreCount > 0">(plus more - continue typing to narrow down search...)</div>'+
-                    '</div>',
+        replace: true,
+        templateUrl: 'partials/globalSearch.html',
         controller: 'SearchCtrl'
-        }
     }
-]);
+}]);

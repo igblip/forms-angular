@@ -6,6 +6,7 @@ var myDemoApp = angular.module('myDemoApp', ['formsAngular']);
 myDemoApp.config(['teleProvider', function (teleProvider) {
     teleProvider.html5Mode(false);
     teleProvider.hashPrefix('!');
+    teleProvider.serverBase('/api/');
 }]);
 
 

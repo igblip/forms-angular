@@ -4,23 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller('NavCtrl',
 [
-    '$scope', '$data', '$filter', '$routeParams', '$controller', 'tele'
+    '$scope', '$routeParams', '$controller', '$data', '$filter', 'tele'
 ,
-function ($scope, $data, $filter, $routeParams, $controller, tele) {
-
-    $scope.items = [];
-
-    $scope.globalShortcuts = function(event) {
-        if (event.keyCode === 191 && event.ctrlKey) {
-            // Ctrl+/ takes you to global search
-            var searchInput = angular.element.find('input')[0];
-            if (searchInput && angular.element(searchInput).attr('id') === 'searchinput') {
-                // check that global search directive is in use
-                angular.element(searchInput).focus();
-                event.preventDefault();
-            }
-        }
-    };
+function ($scope, $routeParams, $controller, $data, $filter, tele) {
 
     var loadControllerAndMenu = function (controllerName, level) {
         var locals = {}, addThis;
@@ -51,6 +37,52 @@ function ($scope, $data, $filter, $routeParams, $controller, tele) {
                 console.log("Unable to instantiate " + controllerName + " - " + error.message);
             }
         }
+    };
+
+    $scope.tele = tele;
+    $scope.items = [];
+
+    // $scope.globalShortcuts = function(event) {
+    //     if (event.keyCode === 191 && event.ctrlKey) {
+    //         // Ctrl+/ takes you to global search
+    //         var searchInput = angular.element.find('input')[0];
+    //         if (searchInput && angular.element(searchInput).attr('id') === 'searchinput') {
+    //             // check that global search directive is in use
+    //             angular.element(searchInput).focus();
+    //             event.preventDefault();
+    //         }
+    //     }
+    // };
+
+    $scope.doClick = function (index) {
+        if ($scope.items[index].broadcast) {
+            $scope.$broadcast($scope.items[index].broadcast)
+        } else {
+            // Performance optimization: http://jsperf.com/apply-vs-call-vs-invoke
+            var args = $scope.items[index].args || [],
+                fn   = $scope.items[index].fn;
+            switch (args.length) {
+                case  0:
+                    fn();
+                    break;
+                case  1:
+                    fn(args[0]);
+                    break;
+                case  2:
+                    fn(args[0], args[1]);
+                    break;
+                case  3:
+                    fn(args[0], args[1], args[2]);
+                    break;
+                case  4:
+                    fn(args[0], args[1], args[2], args[3]);
+                    break;
+            }
+        }
+    };
+
+    $scope.isHidden = function (index) {
+        return $scope.items[index].isHidden ? $scope.items[index].isHidden() : false;
     };
 
     $scope.$on('$locationChangeSuccess', function (event, newUrl, oldUrl) {
@@ -94,42 +126,6 @@ function ($scope, $data, $filter, $routeParams, $controller, tele) {
         }
     });
 
-    $scope.doClick = function (index) {
-        if ($scope.items[index].broadcast) {
-            $scope.$broadcast($scope.items[index].broadcast)
-        } else {
-            // Performance optimization: http://jsperf.com/apply-vs-call-vs-invoke
-            var args = $scope.items[index].args || [],
-                fn = $scope.items[index].fn;
-            switch (args.length) {
-                case  0:
-                    fn();
-                    break;
-                case  1:
-                    fn(args[0]);
-                    break;
-                case  2:
-                    fn(args[0], args[1]);
-                    break;
-                case  3:
-                    fn(args[0], args[1], args[2]);
-                    break;
-                case  4:
-                    fn(args[0], args[1], args[2], args[3]);
-                    break;
-            }
-        }
-    };
 
-    $scope.isHidden = function (index) {
-        return $scope.items[index].isHidden ? $scope.items[index].isHidden() : false;
-    };
-
-    $scope.tele = tele;
-
-    $scope.buildUrl = function(path) {
-        return tele.link('demo', path);
-        //return urlService.buildUrl(path);
-    }
 
 }]);

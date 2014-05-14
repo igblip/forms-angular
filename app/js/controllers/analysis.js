@@ -127,10 +127,15 @@ function ($scope, $http, $routeParams, $filter, tele) {
 
     $scope.refreshQuery = function() {
 
+        var api = ['api', 'report', $scope.modelName];
+        var qs = {};
+
         var apiCall = '/api/report/' + $scope.modelName
             ,connector = '?';
+
         if ($scope.reportSchemaName) {
-            apiCall += '/'+$scope.reportSchemaName
+            api.push($scope.reportSchemaName);
+            apiCall += '/' + $scope.reportSchemaName;
         }
 
         if ($scope.paramSchema) {
@@ -143,6 +148,8 @@ function ($scope, $http, $routeParams, $filter, tele) {
                         if (instructions.conversionExpression) {
                             $scope.param = $scope.$eval(instructions.conversionExpression);
                         }
+                        qs.paramVal = $scope.param;
+
                         apiCall += connector + paramVal + '=' + $scope.param;
                         connector = '&';
                     } else if (instructions.required) {

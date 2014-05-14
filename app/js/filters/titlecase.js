@@ -4,6 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.filter('titleCase',[function() {
     return function(str, stripSpaces) {
+        if (!str) {
+            return;
+        }
         var value = str
             .replace(/(_|\.)/g, ' ')                       // replace underscores and dots with spaces
             .replace(/[A-Z]/g, ' $&').trim()               // precede replace caps with a space

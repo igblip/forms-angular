@@ -1,0 +1,43 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid" ng-cloak>
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="pull-left">
+                <a class="brandpluslogo" ng-href="{{tele.link('demo', ['index'])}}"><img src="/img/Home_icon_black.png" width="45" alt="Click on logo to go to home page"></a>
+            </div>
+            <div class="visible-desktop pull-right span2"></div>   <!-- Leave some space for github flash -->
+
+            <global-search class="global-search"></global-search>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a ng-href="{{tele.link('demo', ['get-started'])}}">Get Started</a></li>
+                    <li><a ng-href="{{tele.link('demo', ['schemas'])}}">Schemas</a></li>
+                    <li><a ng-href="{{tele.link('demo', ['forms'])}}">Forms</a></li>
+                    <li><a ng-href="{{tele.link('demo', ['reporting'])}}">Reporting</a></li>
+                    <li class="dropdown"><a class="dropdown-toggle">More</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['examples'])}}">Examples</a></li>
+                            <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['api-docs'])}}">API Documentation</a></li>
+                            <li><a class="dropdown-option" ng-href="{{tele.link('demo', ['in-the-wild'])}}">Who Uses It?</a></li>
+                        </ul>
+                    </li>
+
+                    <li ng-show="items.length > 0" class="dropdown" >
+                        <a class="dropdown-toggle">
+                            {{contextMenu}}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="choice in items">
+                                <a class="dropdown-option" ng-hide="isHidden($index)" ng-href="{{choice.url}}" ng-click="doClick($index)">{{choice.text}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
