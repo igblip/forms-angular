@@ -31,16 +31,24 @@ module.exports = function(config) {
             'app/js/**/*.js',
             'app/demo/demo.js',
             'app/demo/directives/bespoke-field.js',
-            'test/unit/**/*.js'
+            'test/unit/**/*.js',
+            'app/partials/**/*.html',
+            'app/demo/partials/**/*.html'
         ],
 
         // list of files to exclude
         exclude: [
         ],
 
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        //preprocessors: %PREPROCESSORS%
+        preprocessors: {
+            'app/partials/**/*.html': ['ng-html2js'],
+            'app/demo/partials/**/*.html' : ['ng-html2js']
+        },
+
+        ngHtml2JsPreprocessor: {
+            stripPrefix: 'app/',
+            moduleName: 'partials'
+        },
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch : true,
@@ -66,7 +74,8 @@ module.exports = function(config) {
             'karma-chrome-launcher',
             'karma-phantomjs-launcher',
             'karma-firefox-launcher',
-            'karma-junit-reporter'
+            'karma-junit-reporter',
+            'karma-ng-html2js-preprocessor'
         ]
     });
 };

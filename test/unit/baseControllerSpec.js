@@ -71,6 +71,7 @@ describe('"BaseCtrl"', function () {
         beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
             $httpBackend.whenGET('/api/schema/collection').respond({"name": {"instance": "String"}, "hide_me": {"instance": "String", "options": {"form": {"hidden": true}}}});
+
             $location.$$path = '/fng/collection/new';
             routeParamsStub = jasmine.createSpy('routeParamsStub');
             routeParamsStub.modelName = 'collection';
@@ -78,6 +79,7 @@ describe('"BaseCtrl"', function () {
             //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
             ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
             $httpBackend.flush();
         }));
 
@@ -156,6 +158,7 @@ describe('"BaseCtrl"', function () {
                     {"description": "Website", "module": "anything", "_id": "4"}
                 ]
             );
+
             $location.$$path = '/fng/collection/3/edit';
             routeParamsStub = jasmine.createSpy('routeParamsStub');
             routeParamsStub.modelName = 'collection';
@@ -163,6 +166,7 @@ describe('"BaseCtrl"', function () {
             //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
             ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
             $httpBackend.flush();
         }));
 

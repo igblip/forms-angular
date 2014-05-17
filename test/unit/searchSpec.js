@@ -2,11 +2,15 @@ describe('search', function () {
 
     var scope, $httpBackend, $location;
 
-    beforeEach(angular.mock.module('formsAngular'));
+    beforeEach( function () {
+        module('formsAngular');
+        module('partials');
+    });
 
     beforeEach(inject(function (_$httpBackend_, $rootScope, $compile, _$location_) {
         $httpBackend = _$httpBackend_;
         $location = _$location_;
+
         elm = angular.element('<div><global-search class="global-search"></global-search></div>');
         scope = $rootScope;
         $compile(elm)(scope);
@@ -21,7 +25,8 @@ describe('search', function () {
         });
 
         it('should not have an error class in the search box when the form is created', function () {
-            var div = elm.find('div:first');
+            var form = elm.find('form');
+            var div = form.find('div:first');
             expect(div.attr('id')).toBe('search-cg');
             expect(div.attr('class')).toBe('control-group');
         });
@@ -35,6 +40,7 @@ describe('search', function () {
             scope.searchTarget = 'hello';
             scope.$digest();
             $httpBackend.flush();
+
             var results = elm.find('span');
             expect(results.length).toBe(1);
         });
@@ -44,9 +50,12 @@ describe('search', function () {
             scope.searchTarget = 'hello';
             scope.$digest();
             $httpBackend.flush();
+
             var results = elm.find('span');
             expect(results.length).toBe(2);
-            var div = elm.find('div:first');
+
+            var form = elm.find('form');
+            var div = form.find('div:first');
             expect(div.attr('class')).toBe('control-group');
         });
 
@@ -55,10 +64,14 @@ describe('search', function () {
             scope.searchTarget = 'hello';
             scope.$digest();
             $httpBackend.flush();
+
             var results = elm.find('span');
             expect(results.length).toBe(0);
-            var div = elm.find('div:first');
+
+            var form = elm.find('form');
+            var div = form.find('div:first');
             expect(div.attr('class')).toBe('control-group error');
+
             scope.searchTarget = '';
             scope.$digest();
             expect(div.attr('class')).toBe('control-group');
@@ -69,6 +82,7 @@ describe('search', function () {
             scope.searchTarget = 'hello';
             scope.$digest();
             $httpBackend.flush();
+
             var results = elm.find('span');
             expect(results.length).toBe(2);
             results = elm.find('span:first');
@@ -138,7 +152,7 @@ describe('search', function () {
                 {"resource":"f_nested_schema","resourceText":"Exams","id":"51c583d5b5c51226db418f17","text":"Brown, Jenny","searchImportance":99}];
             scope.focus = 0;
             scope.handleKey({keyCode: 13});
-            expect($location.path()).toBe('/f_nested_schema/51c583d5b5c51226db418f15/edit');
+            expect($location.path()).toBe('/fng/f_nested_schema/51c583d5b5c51226db418f15/edit');
         });
 
         it('should clear the target and the reults when Esc is pressed',function() {

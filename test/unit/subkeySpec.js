@@ -1,5 +1,12 @@
 describe('Subkeys', function () {
 
+    var cleanFormInputElement = function() {
+        return angular.element(
+            '<form name="myForm" class="form-horizontal compact">' +
+                '<form-input schema="formSchema"></form-input>' +
+            '</form>');
+    };
+
     beforeEach(function () {
         angular.mock.module('formsAngular');
     });
@@ -57,16 +64,19 @@ describe('Subkeys', function () {
                         }
                     ]
                 });
-                $location.$$path = '/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
+                $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
-                $httpBackend.flush();
             }));
 
             it('generates correct fields', function () {
@@ -117,13 +127,16 @@ describe('Subkeys', function () {
                         }
                     ]
                 });
-                $location.$$path = '/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                 $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
@@ -160,13 +173,16 @@ describe('Subkeys', function () {
                         }
                     ]
                 });
-                $location.$$path = '/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                 $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
@@ -189,13 +205,16 @@ describe('Subkeys', function () {
                     "surname": "Smith",
                     "forename": "Anne"
                 });
-                $location.$$path = '/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                 $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
@@ -213,13 +232,16 @@ describe('Subkeys', function () {
             beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller, $compile) {
                 $httpBackend = _$httpBackend_;
                 $httpBackend.whenGET('/api/schema/f_nested_schema/English').respond(subkeySchema);
-                $location.$$path = '/f_nested_schema/English/new';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/new';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                //routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                 $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
@@ -294,16 +316,19 @@ describe('Subkeys', function () {
                         }
                     ]
                 });
-                $location.$$path = '/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
-                elm = angular.element(
-                    '<form name="myForm" class="form-horizontal compact">' +
-                        '<form-input schema="formSchema"></form-input>' +
-                        '</form>');
+                elm = cleanFormInputElement();
+
+                $location.$$path = '/fng/f_nested_schema/English/51c583d5b5c51226db418f16/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'f_nested_schema';
+                routeParamsStub.formName = 'English';
+                routeParamsStub.id = '51c583d5b5c51226db418f16';
                 scope = $rootScope.$new();
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
+                $httpBackend.flush();
                 $compile(elm)(scope);
                 scope.$digest();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
-                $httpBackend.flush();
             }));
 
             it('generates correct fields', function () {

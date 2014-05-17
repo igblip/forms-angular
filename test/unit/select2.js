@@ -13,9 +13,15 @@ describe('select2', function () {
                 {"surname":{"enumValues":[],"regExp":null,"path":"surname","instance":"String","validators":[[null,"required"]],"setters":[],"getters":[],"options":{"required":true},"_index":null,"isRequired":true},
                  "eyeColour":{"enumValues":["Blue","Brown","Green","Hazel"],"regExp":null,"path":"eyeColour","instance":"String","validators":[[null,"enum"]],"setters":[],"getters":[],"options":{"enum":["Blue","Brown","Green","Hazel"],"required":false,"form":{"placeHolder":"Select eye colour","select2":{}}},"_index":null,"isRequired":false,"$conditionalHandlers":{}}}
             );
+
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = 3;
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
             $httpBackend.flush();
         }));
 
@@ -42,9 +48,15 @@ describe('select2', function () {
             $httpBackend.whenGET('/api/collection/3').respond(
                 {"surname":"Smith","eyeColour":"Green"}
             );
+
+            $location.$$path = '/fng/collection/3/edit';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/3/edit';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
             $httpBackend.flush();
         }));
 
