@@ -16,6 +16,7 @@ var fng = angular.module( 'formsAngular'
 
 
 fng.run(['tele', function (tele) {
+
     tele.routes( 'form', 'fng/', [
         { path: '/analyse/:modelName/:reportSchemaName', route: { templateUrl: 'partials/base-analysis.html'   }},
         { path: '/analyse/:modelName',                   route: { templateUrl: 'partials/base-analysis.html'   }},

@@ -2,8 +2,19 @@ describe('"BaseCtrl"', function () {
 
     var $httpBackend;
 
+    function initService(html5Mode, hashPrefix, serverBase, supportHistory) {
+        return module(function($provide, teleProvider){
+            teleProvider.html5Mode(html5Mode);
+            teleProvider.hashPrefix(hashPrefix);
+            teleProvider.serverBase(serverBase);
+            $provide.value('$sniffer', {history: supportHistory});
+        });
+    }
+
     beforeEach(function () {
-        angular.mock.module('formsAngular');
+        module('formsAngular');
+        module('guidelight.telepathic');
+        initService(false, '!', 'api/', true)
     });
 
     afterEach(function () {
@@ -11,15 +22,21 @@ describe('"BaseCtrl"', function () {
         $httpBackend.verifyNoOutstandingRequest();
     });
 
+
+
     describe('Schema requests', function () {
 
         it('should request a schema', function () {
             inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                 $httpBackend = _$httpBackend_;
                 $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                $location.$$path = '/collection/new';
+                $location.$$path = '/fng/collection/new';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'collection';
+                //routeParamsStub.id = 3;
+                //routeParamsStub.formName = 'foo';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
                 $httpBackend.flush();
             });
             expect(scope.formSchema.length).toBe(1);
@@ -31,24 +48,31 @@ describe('"BaseCtrl"', function () {
                 $httpBackend.when('GET', '/api/schema/collection').respond(function () {
                     return [404, 'Some error', {}]
                 });
-                $location.$$path = '/collection/new';
+                $location.$$path = '/fng/collection/new';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'collection';
+                //routeParamsStub.id = 3;
+                //routeParamsStub.formName = 'foo';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
                 $httpBackend.flush();
-                expect($location.path()).toBe('/404');
+                expect($location.path()).toBe('/oops/404');
             });
         });
 
-        it('should allow for override screens', function () {
-            inject(function (_$httpBackend_, $rootScope, $controller, _$location_) {
-                $httpBackend = _$httpBackend_;
-                _$location_.path('/someModel/new');
-                $httpBackend.when('GET', '/api/schema/someModel').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope, $location: _$location_});
-                $httpBackend.flush();
-            });
-        });
+        // it('should allow for override screens', function () {
+        //     inject(function (_$httpBackend_, $rootScope, $controller, $location) {
+        //         $httpBackend = _$httpBackend_;
+        //         $location.$$path = '/someModel/new';
+        //         $httpBackend.when('GET', '/api/schema/someModel').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
+        //         routeParamsStub = jasmine.createSpy('routeParamsStub');
+        //         routeParamsStub.modelName = 'someModel';
+        //         //routeParamsStub.formName = 'foo';
+        //         scope = $rootScope.$new();
+        //         ctrl = $controller("BaseCtrl", {$scope: scope, '$routeParams': routeParamsStub});
+        //         $httpBackend.flush();
+        //     });
+        // });
     });
 
     describe('converts model schema to form schema', function () {
@@ -57,12 +81,14 @@ describe('"BaseCtrl"', function () {
 
         beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
-            $httpBackend.whenGET('/api/schema/collection').respond(
-                {"name": {"instance": "String"}, "hide_me": {"instance": "String", "options": {"form": {"hidden": true}}}}
-            );
-            $location.$$path = '/collection/new';
+            $httpBackend.whenGET('/api/schema/collection').respond({"name": {"instance": "String"}, "hide_me": {"instance": "String", "options": {"form": {"hidden": true}}}});
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = 3;
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -90,15 +116,45 @@ describe('"BaseCtrl"', function () {
         beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
             $httpBackend.whenGET('/api/schema/collection').respond(
-                {"textField": {"path": "textField", "instance": "String", "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null},
-                    "lookupField": {"path": "lookupField", "instance": "ObjectID", "options": {"ref": "Person", "form": {"hidden": true}}, "_index": null},
-                    "arrayOfString": {"caster": {"instance": "String"}, "path": "arrayOfString", "options": {"type": [null]}, "_index": null},
-                    "arrayOfLookup": {"caster": {"path": null, "instance": "ObjectID", "options": {}, "_index": null}, "path": "arrayOfLookup", "options": {"type": [null], "ref": "referral_format", "form": {"label": "Referral Format"}}, "_index": null}}
+                {"textField": {
+                    "path": "textField", "instance": "String", "options": {
+                        "form": {
+                            "label": "Organisation Name"},
+                        "list": true},
+                    "_index": null},
+                    "lookupField": {
+                        "path": "lookupField", "instance": "ObjectID", "options": {
+                            "ref": "Person", "form": {
+                                "hidden": true}},
+                        "_index": null},
+                    "arrayOfString": {
+                        "caster": {
+                            "instance": "String"},
+                        "path": "arrayOfString", "options": {
+                            "type": [null]},
+                        "_index": null},
+                    "arrayOfLookup": {
+                        "caster": {
+                            "path": null, "instance": "ObjectID", "options": {}, "_index": null},
+                            "path": "arrayOfLookup", "options": {
+                                "type": [null], "ref": "referral_format", "form": {
+                                    "label": "Referral Format"}},
+                            "_index": null}}
             );
             $httpBackend.whenGET('/api/schema/referral_format').respond(
-                {"description": {"enumValues": [], "regExp": null, "path": "description", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"list": true}, "_index": null},
-                    "module": {"enumValues": [], "regExp": null, "path": "module", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"hidden": true}}, "_index": null},
-                    "_id": {"path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {"auto": true}, "_index": null}}
+                {"description": {
+                    "enumValues": [], "regExp": null, "path": "description", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {
+                        "list": true},
+                    "_index": null},
+                    "module": {
+                        "enumValues": [], "regExp": null, "path": "module", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {
+                            "form": {
+                                "hidden": true}},
+                        "_index": null},
+                    "_id": {
+                        "path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {
+                            "auto": true},
+                        "_index": null}}
             );
             $httpBackend.whenGET('/api/collection/3').respond({
                 "textField": "This is some text", "lookupField": "123456789", "arrayOfString": ["string", "rope", "cord"], "arrayOfLookup": ["1", "2", "4"]
@@ -111,9 +167,13 @@ describe('"BaseCtrl"', function () {
                     {"description": "Website", "module": "anything", "_id": "4"}
                 ]
             );
-            $location.$$path = '/collection/3/edit';
+            $location.$$path = '/fng/collection/3/edit';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -176,9 +236,13 @@ describe('"BaseCtrl"', function () {
                 ], "setters": [], "getters": [], "options": {"required": true}, "_index": null, "isRequired": true},
                     "town": {"instance": "String"}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -201,9 +265,13 @@ describe('"BaseCtrl"', function () {
                 {"surname": {"enumValues": [], "regExp": null, "path": "surname", "instance": "String", "setters": [], "getters": [], "options": {"readonly": true}, "_index": null},
                     "town": {"instance": "String"}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -222,14 +290,18 @@ describe('"BaseCtrl"', function () {
         beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
             $httpBackend = _$httpBackend_;
             $httpBackend.whenGET('/api/schema/collection').respond(
-
-
-                {"password": {"enumValues": [], "regExp": null, "path": "password", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {}, "_index": null, "$conditionalHandlers": {}}, "_id": {"path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {"auto": true}, "_index": null, "$conditionalHandlers": {}}}
-
+                {"password": {
+                    "enumValues": [], "regExp": null, "path": "password", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {}, "_index": null, "$conditionalHandlers": {}}, "_id": {"path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {
+                        "auto": true},
+                    "_index": null, "$conditionalHandlers": {}}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -250,9 +322,13 @@ describe('"BaseCtrl"', function () {
             $httpBackend.whenGET('/api/schema/collection').respond(
                 {"sysUserData.password": {"enumValues": [], "regExp": null, "path": "sysUserData.password", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "New Password", "hidden": false}, "default": ""}, "_index": null, "defaultValue": "", "$conditionalHandlers": {}}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -273,9 +349,13 @@ describe('"BaseCtrl"', function () {
             $httpBackend.whenGET('/api/schema/collection').respond(
                 {"password": {"enumValues": [], "regExp": null, "path": "password", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"type": "text"}}, "_index": null, "$conditionalHandlers": {}}, "_id": {"path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {"auto": true}, "_index": null, "$conditionalHandlers": {}}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -296,9 +376,13 @@ describe('"BaseCtrl"', function () {
             $httpBackend.whenGET('/api/schema/collection').respond(
                 {"forename": {"enumValues":[],"regExp":null,"path":"forename","instance":"String","validators":[],"setters":[],"getters":[],"options":{"list":true,"index":true,"form":{"type":"password"}},"_index":true,"$conditionalHandlers":{}}}
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -322,9 +406,13 @@ describe('"BaseCtrl"', function () {
                 {"secret": {"enumValues": [], "regExp": null, "path": "password", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"type": "password"}}, "_index": null, "$conditionalHandlers": {}}, "_id": {"path": "_id", "instance": "ObjectID", "validators": [], "setters": [null], "getters": [], "options": {"auto": true}, "_index": null, "$conditionalHandlers": {}}}
 
             );
+            $location.$$path = '/fng/collection/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/new';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -377,9 +465,13 @@ describe('"BaseCtrl"', function () {
                     {"description": "Website", "module": "anything", "_id": "4"}
                 ]
             );
-            $location.$$path = '/collection/3/edit';
+            $location.$$path = '/fng/collection/3/edit';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -513,9 +605,13 @@ describe('"BaseCtrl"', function () {
                 {"_id": "ASmithy", "forename": "John", "surname": "AsstSmith" },
                 { "surname": "AsstJenkins", "forename": "Nicky", "_id": "AJenks"}
             ]);
+            $location.$$path = '/fng/collection/3/edit';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'collection';
+            routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            $location.$$path = '/collection/3/edit';
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -659,9 +755,13 @@ describe('"BaseCtrl"', function () {
                 }
 
             ]);
-            $location.$$path = '/person/new';
+            $location.$$path = '/fng/person/new';
+            routeParamsStub = jasmine.createSpy('routeParamsStub');
+            routeParamsStub.modelName = 'person';
+            //routeParamsStub.id = '3';
+            //routeParamsStub.formName = 'foo';
             scope = $rootScope.$new();
-            ctrl = $controller("BaseCtrl", {$scope: scope});
+            ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
             $httpBackend.flush();
         }));
 
@@ -686,15 +786,19 @@ describe('"BaseCtrl"', function () {
             inject(function (_$httpBackend_, $rootScope, $routeParams, $controller, $location) {
                 $httpBackend = _$httpBackend_;
                 $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                $location.$$path = '/collection/new';
+                $location.$$path = '/fng/collection/new';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'collection';
+                //routeParamsStub.id = '3';
+                //routeParamsStub.formName = 'foo';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
                 scope.record = {"familyName": "Chapman", "givenName": "Mark"};
-                $httpBackend.when('POST', '/api/collection', {"familyName": "Chapman", "givenName": "Mark"}).respond(400, {message: "There is some kind of error", status: "err"});
+                $httpBackend.when('POST', '/api/collection', {"familyName": "Chapman", "givenName": "Mark"}).respond(400, {message: "TEST ERROR MESSAGE: There is some kind of error", status: "err"});
                 scope.save();
                 $httpBackend.flush();
                 expect(scope.alertTitle).toEqual('Error!');
-                expect(scope.errorMessage).toEqual('There is some kind of error');
+                expect(scope.errorMessage).toEqual('TEST ERROR MESSAGE: There is some kind of error');
             });
         });
 
@@ -706,9 +810,13 @@ describe('"BaseCtrl"', function () {
             inject(function (_$httpBackend_, $rootScope, $routeParams, $controller, $location) {
                 $httpBackend = _$httpBackend_;
                 $httpBackend.whenGET('/api/schema/collection').respond({"email": {"enumValues": [], "regExp": null, "path": "email", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"directive": "email-field"}}, "_index": null, "$conditionalHandlers": {}}});
-                $location.$$path = '/collection/new';
+                $location.$$path = '/fng/collection/new';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'collection';
+                //routeParamsStub.id = '3';
+                //routeParamsStub.formName = 'foo';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {$scope: scope});
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
                 $httpBackend.flush();
             });
 
@@ -718,7 +826,7 @@ describe('"BaseCtrl"', function () {
 
     describe('deletion confirmation modal', function () {
 
-        var $scope, ctrl, provider, resolveCallback, deferred;
+        var scope, ctrl, provider, resolveCallback, deferred;
 
         beforeEach(function () {
             module(function ($modalProvider) {
@@ -727,20 +835,27 @@ describe('"BaseCtrl"', function () {
             inject(function (_$httpBackend_, $rootScope, $routeParams, $controller, $location, _$modal_, $q) {
                 $modal = _$modal_;
                 $httpBackend = _$httpBackend_;
-                $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
+                $httpBackend.whenGET('/api/schema/collection').respond(
+                    {"name": {
+                        "enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {
+                            "form": {
+                                "label": "Organisation Name"},
+                            "list": true},
+                        "_index": null}});
                 $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan"});
-                $location.$$path = '/collection/125/edit';
-                $scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {
-                    $scope: $scope,
-                    $modal: $modal
-                });
+                $location.$$path = '/fng/collection/125/edit';
+                routeParamsStub = jasmine.createSpy('routeParamsStub');
+                routeParamsStub.modelName = 'collection';
+                routeParamsStub.id = '125';
+                //routeParamsStub.formName = 'foo';
+                scope = $rootScope.$new();
+                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub, '$modal': $modal});
 
                 deferred = $q.defer();
                 var fakeModal = {result: deferred.promise};
                 spyOn($modal, 'open').andReturn(fakeModal);
 
-                $scope.record._id = 1;
+                scope.record._id = 1;
             });
         });
 
@@ -756,13 +871,13 @@ describe('"BaseCtrl"', function () {
 
         it('modal messageBox should be defined', function () {
 
-            $scope.delete();
+            scope.delete();
             $httpBackend.flush();
             expect($modal.open).toHaveBeenCalled();
         });
 
         it('should not delete when No is clicked', function () {
-            $scope.delete();
+            scope.delete();
             deferred.resolve(false);    // Same as clicking on Yes
             $httpBackend.flush();
         });
@@ -770,7 +885,7 @@ describe('"BaseCtrl"', function () {
         it('send a delete request when yes is clicked', function () {
             $httpBackend.when('DELETE', '/api/collection/125').respond(200, 'SUCCESS');
             $httpBackend.expectDELETE('/api/collection/125');
-            $scope.delete();
+            scope.delete();
             deferred.resolve(true);    // Same as clicking on Yes
             $httpBackend.flush();
         });

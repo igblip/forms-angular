@@ -124,17 +124,17 @@ DataForm.prototype.addResource = function (resource_name, model, options) {
         }
     }
 
-    if (resource_name === 'b_using_options') {
-        console.log('Before: ');
-        console.log(resource.options);
-    }
+    // if (resource_name === 'b_using_options') {
+    //     console.log('Before: ');
+    //     console.log(resource.options);
+    // }
 
     extend( resource.options, this.preprocess(resource.model.schema.paths, null) );
 
-    if (resource_name === 'b_using_options') {
-        console.log('After: ');
-        console.log(resource.options);
-    }
+    // if (resource_name === 'b_using_options') {
+    //     console.log('After: ');
+    //     console.log(resource.options);
+    // }
 
 
     if (resource.options.searchImportance) {

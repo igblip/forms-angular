@@ -4,9 +4,9 @@ var fng = angular.module('formsAngular');
 
 fng.controller( 'BaseCtrl',
 [                                                   // $data is a hacked up 'global' and must die
-    '$scope', '$routeParams', '$filter', '$data', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'tele'
+    '$scope', '$routeParams', '$modal', '$filter', '$data', '$window', 'SubmissionsService', 'SchemasService', 'tele', '$log'
 ,
-function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsService, SchemasService, tele) {
+function ($scope, $routeParams, $modal, $filter, $data, $window, SubmissionsService, SchemasService, tele, $log) {
 
     var master = {};
     var fngInvalidRequired = 'fng-invalid-required';
@@ -36,22 +36,39 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
     $scope.dataDependencies = {};
     $scope.select2List = [];
 
-    //angular.extend($scope, $locationParse($location.path()));
+    // state management cruft: needs to be refactored
+    $scope.index = false;
+    $scope.analyse = false;
+    $scope.newRecord = false;
 
-    // $scope.index = true/false;
-    // $scope.newRecord = true/false;
-    // $scope.analyse = true/false;
-
+    var pathParts = tele.activePath().split('/');
+    if (pathParts.lastIndexOf('index') === pathParts.length - 1) {
+        $scope.index = true;
+    }
+    if (pathParts.indexOf('analyse') !== -1) {
+        $scope.analyse = true;
+    } else if (pathParts.indexOf('new') !== -1) {
+        $scope.newRecord = true;
+    } else if (pathParts.indexOf('edit') !== -1) {
+        // ?
+    }
 
     $scope.modelName = $routeParams.modelName;
     $scope.formName  = $routeParams.formName;
-    $scope.id        = $routeParams.id;
+
+    if ($routeParams.id !== undefined) {
+        $scope.id = $routeParams.id;
+    }
 
     $scope.modelNameDisplay = sharedStuff.modelNameDisplay || $filter('titleCase')($scope.modelName);
 
+
+    //console.log('modelName: ' + $scope.modelName + ', formName: ' + $scope.formName + ', id: ' + $scope.id);
+
+
     // load up the schema
     SchemasService.getSchema($scope.modelName, $scope.formName)
-        .success(function (data) {
+        .success( function (data) {
             handleSchema('Main ' + $scope.modelName, data, $scope.formSchema, $scope.listSchema, '', true);
 
             if (!$scope.id && !$scope.newRecord) { //this is a list. listing out contents of a collection
@@ -64,19 +81,8 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
                     }
                 }, true);
 
-                if ($scope.id) {
-                    // Going to read a record
-                    if (typeof $scope.dataEventFunctions.onBeforeRead === 'function') {
-                        $scope.dataEventFunctions.onBeforeRead($scope.id, function (err) {
-                            if (err) {
-                                showError(err);
-                            } else {
-                                readRecord();
-                            }
-                        });
-                    } else {
-                        readRecord();
-                    }
+                if ($scope.id && callBeforeReadListeners($scope.id)) {
+                    readRecord();
                 } else {
                     // New record
                     master = {};
@@ -519,6 +525,8 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
     var showError = function (errString, alertTitle) {
         $scope.alertTitle = alertTitle ? alertTitle : "Error!";
         $scope.errorMessage = errString;
+
+        console.log(errString);
     };
 
     // Split a field name into the next level and all following levels
@@ -853,6 +861,19 @@ function ($scope, $routeParams, $filter, $data, $modal, $window, SubmissionsServ
 
     //----------------------------------------------------------------------------------------
     // Record Event Listener processing - each returns true on success
+    var callBeforeReadListeners = function (recordId) {
+        var result = true
+        if (typeof $scope.dataEventFunctions.onBeforeRead === 'function') {
+            $scope.dataEventFunctions.onBeforeRead(recordId, function (err) {
+                if (err) {
+                    showError(err);
+                    result = false;
+                }
+            });
+        }
+        return result;
+    };
+
     var callBeforeUpdateListeners = function (dataToSave) {
         var result = true
         if (typeof $scope.dataEventFunctions.onBeforeUpdate === "function") {

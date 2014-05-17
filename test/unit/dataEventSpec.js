@@ -1,9 +1,43 @@
 describe('Data Events', function () {
 
     var $httpBackend;
+    var apiSchemaCollectionResponse = {
+        "name": {
+            "enumValues": [],
+            "regExp": null,
+            "path": "name",
+            "instance": "String",
+            "validators": [],
+            "setters": [],
+            "getters": [],
+            "options": {
+                "form": {
+                    "label": "Organisation Name"
+                },
+                "list": true
+            },
+            "_index": null
+        }
+    };
+    var apiCollection125Response = {
+        "name": "Alan",
+        "_id": "125"
+    };
+
+
+    function initService(html5Mode, hashPrefix, serverBase, supportHistory) {
+        return module(function($provide, teleProvider){
+            teleProvider.html5Mode(html5Mode);
+            teleProvider.hashPrefix(hashPrefix);
+            teleProvider.serverBase(serverBase);
+            $provide.value('$sniffer', {history: supportHistory});
+        });
+    }
 
     beforeEach(function () {
-        angular.mock.module('formsAngular');
+        module('formsAngular');
+        module('guidelight.telepathic');
+        initService(false, '!', 'api/', true)
     });
 
     afterEach(function () {
@@ -18,10 +52,15 @@ describe('Data Events', function () {
             it('should request make a call before creating document', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $location.$$path = '/collection/new';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+
+                    $location.$$path = '/fng/collection/new';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    //routeParamsStub.id = 3;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeCreate = function (data, cb) {
                         data.name = 'Alan';
@@ -38,14 +77,19 @@ describe('Data Events', function () {
             it('should not create document if onBefore returns an error', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $location.$$path = '/collection/new';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+
+                    $location.$$path = '/fng/collection/new';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    //routeParamsStub.id = 3;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeCreate = function (data, cb) {
                         data.name = 'Alan';
-                        cb(new Error("Something wrong"));
+                        cb(new Error("TEST ERROR MESSAGE: should not create document if onBefore returns an error"));
                     };
 
                     scope.record = {name: "John"};
@@ -61,15 +105,20 @@ describe('Data Events', function () {
             it('should call function', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeRead = function (id, cb) {
                         if (id === 123) {
-                            cb(new Error("You have no access"));
+                            cb(new Error("TEST ERROR MESSAGE: should call function"));
                         } else {
                             cb();
                         }
@@ -83,14 +132,19 @@ describe('Data Events', function () {
             it('should not return document if onBefore returns an error', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeRead = function (id, cb) {
-                        if (id === '125') {
-                            cb(new Error("You have no access"));
+                        if ('' + id === '125') {
+                            cb(new Error("TEST ERROR MESSAGE: should not return document if onBefore returns an error"));
                         } else {
                             cb();
                         }
@@ -107,11 +161,16 @@ describe('Data Events', function () {
             it('should make a call before updating document', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeUpdate = function (data, old, cb) {
                         expect(data.name).toEqual('John');
@@ -131,14 +190,19 @@ describe('Data Events', function () {
             it('should not update document if onBefore returns an error', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeUpdate = function (data, old, cb) {
-                        cb(new Error("Fail!"));
+                        cb(new Error("TEST ERROR MESSAGE: should not update document if onBefore returns an error"));
                     };
 
                     $httpBackend.flush();
@@ -155,11 +219,16 @@ describe('Data Events', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location, $data, _$modal_, $q) {
                     $httpBackend = _$httpBackend_;
                     var $modal = _$modal_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope, $modal: $modal});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onBeforeDelete = function (data, cb) {cb();};
 
@@ -186,14 +255,19 @@ describe('Data Events', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location, $data, _$modal_, $q) {
                     $httpBackend = _$httpBackend_;
                     $modal = _$modal_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope, $modal: $modal});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub, '$modal': $modal});
 
                     scope.dataEventFunctions.onBeforeDelete = function (data, cb) {
-                        cb(new Error("Something wrong"));
+                        cb(new Error("TEST ERROR MESSAGE: should not delete document if onBefore returns an error"));
                     };
 
                     spyOn(scope.dataEventFunctions, "onBeforeDelete").andCallThrough();
@@ -220,11 +294,16 @@ describe('Data Events', function () {
             it('should request make a call after creating document', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
                     $httpBackend.when('POST', '/api/collection', {"name": "John"}).respond(200, {name: "Philip"});
-                    $location.$$path = '/collection/new';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+
+                    $location.$$path = '/fng/collection/new';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    //routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onAfterCreate = function (data) {
                         expect(data.name).toEqual('Philip');
@@ -243,11 +322,16 @@ describe('Data Events', function () {
             it('should request make a call after reading document', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onAfterRead = function (data) {
                         expect(data.name).toEqual('Alan')
@@ -263,11 +347,16 @@ describe('Data Events', function () {
             it('should request make a call after updating document', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location) {
                     $httpBackend = _$httpBackend_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                     scope.dataEventFunctions.onAfterUpdate = function (data, old) {
                         expect(data.name).toEqual('Philip');
@@ -289,11 +378,16 @@ describe('Data Events', function () {
                 inject(function (_$httpBackend_, $rootScope, $controller, $location, $data, _$modal_, $q) {
                     $httpBackend = _$httpBackend_;
                     var $modal = _$modal_;
-                    $httpBackend.whenGET('/api/schema/collection').respond({"name": {"enumValues": [], "regExp": null, "path": "name", "instance": "String", "validators": [], "setters": [], "getters": [], "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null}});
-                    $httpBackend.whenGET('/api/collection/125').respond({"name": "Alan", "_id": "125"});
-                    $location.$$path = '/collection/125/edit';
-                    var scope = $rootScope.$new();
-                    $controller("BaseCtrl", {$scope: scope, $modal: $modal});
+                    $httpBackend.whenGET('/api/schema/collection').respond(apiSchemaCollectionResponse);
+                    $httpBackend.whenGET('/api/collection/125').respond(apiCollection125Response);
+
+                    $location.$$path = '/fng/collection/125/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = 125;
+                    //routeParamsStub.formName = 'foo';
+                    scope = $rootScope.$new();
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub, '$modal': $modal});
 
                     scope.dataEventFunctions.onAfterDelete = function (data) {
                     };

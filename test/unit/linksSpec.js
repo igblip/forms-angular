@@ -2,8 +2,19 @@ describe('Links', function () {
 
     var schemaThrough, dataThrough;
 
+    function initService(html5Mode, hashPrefix, serverBase, supportHistory) {
+        return module(function($provide, teleProvider){
+            teleProvider.html5Mode(html5Mode);
+            teleProvider.hashPrefix(hashPrefix);
+            teleProvider.serverBase(serverBase);
+            $provide.value('$sniffer', {history: supportHistory});
+        });
+    }
+
     beforeEach(function () {
-        angular.mock.module('formsAngular');
+        module('formsAngular');
+        module('guidelight.telepathic');
+        initService(false, '!', 'api/', true)
     });
 
     describe('simple link', function () {
@@ -23,15 +34,42 @@ describe('Links', function () {
                 beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
                     $httpBackend = _$httpBackend_;
                     $httpBackend.whenGET('/api/schema/collection').respond({
-                        "textField": {"path": "textField", "instance": "String", "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null},
-                        "lookupField": {"path": "lookupField", "instance": "ObjectID", "options": {"ref": "Person", form: {link: {linkOnly: true, text: "My link text"}}}, "_index": null}
+                        'textField': {
+                            'path': 'textField',
+                            'instance': 'String',
+                            'options': {
+                                'form': {
+                                    'label': 'Organisation Name'
+                                },
+                                'list': true
+                            },
+                            '_index': null
+                        },
+                        'lookupField': {
+                            'path': 'lookupField',
+                            'instance': 'ObjectID',
+                            'options': {
+                                'ref': 'Person',
+                                'form': {
+                                    'link': {
+                                        'linkOnly': true,
+                                        'text': 'My link text'
+                                    }
+                                }
+                            },
+                            '_index': null
+                        }
                     });
-                    $httpBackend.whenGET('/api/collection/3').respond({
-                        "textField": "This is some text", "lookupField": 123456789
-                    });
-                    $location.$$path = '/collection/3/edit';
+                    $httpBackend.whenGET('/api/collection/3').respond({"textField": "This is some text", "lookupField": 123456789});
+
+                    $location.$$path = '/fng/collection/3/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = '3';
+                    //routeParamsStub.formName = 'foo';
                     scope = $rootScope.$new();
-                    ctrl = $controller("BaseCtrl", {$scope: scope});
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                     $httpBackend.flush();
                 }));
 
@@ -54,7 +92,7 @@ describe('Links', function () {
                     elm = angular.element(
                         '<form name="myForm" class="form-horizontal compact">' +
                             '<form-input schema="formSchema"></form-input>' +
-                            '</form>');
+                        '</form>');
 
                     scope = $rootScope;
                     scope.formSchema = schemaThrough;
@@ -65,7 +103,7 @@ describe('Links', function () {
                 //
                 it('should have a link', function () {
                     var anchor = elm.find('a');
-                    expect(anchor.attr('href')).toBe('/#!/Person/123456789/edit');
+                    expect(anchor.attr('href')).toBe('/#!/fng/Person/123456789/edit');
                     expect(anchor.text()).toBe('My link text');
                 });
 
@@ -92,15 +130,43 @@ describe('Links', function () {
                 beforeEach(inject(function (_$httpBackend_, $rootScope, $location, $controller) {
                     $httpBackend = _$httpBackend_;
                     $httpBackend.whenGET('/api/schema/collection').respond({
-                        "textField": {"path": "textField", "instance": "String", "options": {"form": {"label": "Organisation Name"}, "list": true}, "_index": null},
-                        "lookupField": {"path": "lookupField", "instance": "ObjectID", "options": {"ref": "Person", form: {link: {linkOnly: true, form:'myschema', text: "My link text"}}}, "_index": null}
+                        'textField': {
+                            'path': 'textField',
+                            'instance': 'String',
+                            'options': {
+                                'form': {
+                                    'label': 'Organisation Name'
+                                },
+                                'list': true
+                            },
+                            '_index': null
+                        },
+                        'lookupField': {
+                            'path': 'lookupField',
+                            'instance': 'ObjectID',
+                            'options': {
+                                'ref': 'Person',
+                                'form': {
+                                    'link': {
+                                        'linkOnly': true,
+                                        'form':'myschema',
+                                        'text': 'My link text'
+                                    }
+                                }
+                            },
+                            '_index': null
+                        }
                     });
-                    $httpBackend.whenGET('/api/collection/3').respond({
-                        "textField": "This is some text", "lookupField": 123456789
-                    });
-                    $location.$$path = '/collection/3/edit';
+                    $httpBackend.whenGET('/api/collection/3').respond({"textField": "This is some text", "lookupField": 123456789});
+
+                    $location.$$path = '/fng/collection/3/edit';
+                    routeParamsStub = jasmine.createSpy('routeParamsStub');
+                    routeParamsStub.modelName = 'collection';
+                    routeParamsStub.id = '3';
+                    //routeParamsStub.formName = 'foo';
                     scope = $rootScope.$new();
-                    ctrl = $controller("BaseCtrl", {$scope: scope});
+                    ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+
                     $httpBackend.flush();
                 }));
 
@@ -135,7 +201,7 @@ describe('Links', function () {
                 //
                 it('should have a link', function () {
                     var anchor = elm.find('a');
-                    expect(anchor.attr('href')).toBe('/#!/Person/myschema/123456789/edit');
+                    expect(anchor.attr('href')).toBe('/#!/fng/Person/myschema/123456789/edit');
                     expect(anchor.text()).toBe('My link text');
                 });
 
