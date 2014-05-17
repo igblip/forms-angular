@@ -25,18 +25,8 @@ describe('Data Events', function () {
     };
 
 
-    function initService(html5Mode, hashPrefix, serverBase, supportHistory) {
-        return module(function($provide, teleProvider){
-            teleProvider.html5Mode(html5Mode);
-            teleProvider.hashPrefix(hashPrefix);
-            teleProvider.serverBase(serverBase);
-            $provide.value('$sniffer', {history: supportHistory});
-        });
-    }
-
     beforeEach(function () {
         module('formsAngular');
-        initService(false, '!', 'api/', true)
     });
 
     afterEach(function () {

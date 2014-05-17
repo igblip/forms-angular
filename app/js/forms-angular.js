@@ -14,6 +14,11 @@ var fng = angular.module( 'formsAngular'
     ,   'guidelight.telepathic'
 ]);
 
+fng.config(['teleProvider', function (teleProvider) {
+    teleProvider.html5Mode(false);
+    teleProvider.hashPrefix('!');
+    teleProvider.serverBase('/api/');
+}]);
 
 fng.run(['tele', function (tele) {
 
