@@ -23,8 +23,8 @@ fng.config(['teleProvider', function (teleProvider) {
 fng.run(['tele', function (tele) {
 
     tele.routes( 'form', 'fng/', [
-        { path: '/report/:modelName/:reportSchemaName', route: { templateUrl: 'partials/base-analysis.html'   }},
-        { path: '/report/:modelName',                   route: { templateUrl: 'partials/base-analysis.html'   }},
+        { path: '/report/:modelName/:reportSchemaName',  route: { templateUrl: 'partials/base-report.html'   }},
+        { path: '/report/:modelName',                    route: { templateUrl: 'partials/base-report.html'   }},
         { path: '/:modelName/:id/edit',                  route: { templateUrl: 'partials/base-edit.html'       }},
         { path: '/:modelName/new',                       route: { templateUrl: 'partials/base-edit.html'       }},
         { path: '/:modelName',                           route: { templateUrl: 'partials/base-list.html'       }},

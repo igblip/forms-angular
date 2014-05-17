@@ -1052,7 +1052,7 @@ function ($scope, $routeParams, $modal, $filter, $data, $window, SubmissionsServ
             });
     };
 
-    // used in partials/base-list.html, partials/base-edit.html and partials/base-analysis.html
+    // used in partials/base-list.html, partials/base-edit.html and partials/base-report.html
     $scope.dismissError = function () {
         delete $scope.errorMessage;
     };
