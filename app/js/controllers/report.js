@@ -8,8 +8,6 @@ fng.controller( 'ReportCtrl',
 ,
 function ($scope, $http, $routeParams, $filter, tele) {
 
-    console.log('oh mightly report');
-
     var firstTime = true,
         pdfPlugIn = new ngGridPdfExportPlugin({inhibitButton:true}),
         csvPlugIn = new ngGridCsvExportPlugin({inhibitButton:true});

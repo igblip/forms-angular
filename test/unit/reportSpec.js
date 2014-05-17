@@ -25,7 +25,7 @@ describe('Reports', function() {
                 //routeParamsStub.id = 3;
                 //routeParamsStub.formName = 'foo';
                 scope = $rootScope.$new();
-                ctrl = $controller("BaseCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
+                ctrl = $controller("ReportCtrl", {'$scope': scope, '$routeParams': routeParamsStub});
 
                 $httpBackend.flush();
                 expect(scope.report.length).toBe(2);
