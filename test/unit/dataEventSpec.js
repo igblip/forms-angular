@@ -36,7 +36,6 @@ describe('Data Events', function () {
 
     beforeEach(function () {
         module('formsAngular');
-        module('guidelight.telepathic');
         initService(false, '!', 'api/', true)
     });
 

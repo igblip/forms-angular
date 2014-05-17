@@ -13,7 +13,6 @@ describe('Links', function () {
 
     beforeEach(function () {
         module('formsAngular');
-        module('guidelight.telepathic');
         initService(false, '!', 'api/', true)
     });
 
