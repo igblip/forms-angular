@@ -2,7 +2,7 @@
 
 var fng = angular.module('formsAngular');
 
-fng.controller( 'AnalysisCtrl',
+fng.controller( 'ReportCtrl',
 [
     '$scope', '$http', '$routeParams', '$filter', 'tele'
 ,

@@ -241,8 +241,8 @@ DataFormHandler.addResource('applicant', Applicant);   // Create and add more sc
 myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
         when('/index', {templateUrl: 'partials/index.html'} ).
-        when('/analyse/:model/:reportSchemaName', {templateUrl: 'partials/base-analysis.html'}).
-        when('/analyse/:model', {templateUrl: 'partials/base-analysis.html'}).
+        when('/report/:model/:reportSchemaName', {templateUrl: 'partials/base-analysis.html'}).
+        when('/report/:model', {templateUrl: 'partials/base-analysis.html'}).
         when('/:model/:id/edit', {templateUrl: 'partials/base-edit.html'}).
         when('/:model/new', {templateUrl: 'partials/base-edit.html'}).
         when('/:model', {templateUrl: 'partials/base-list.html'}).
@@ -264,7 +264,7 @@ myApp.config(['$routeProvider', function($routeProvider) {
     &lt;li&gt;Create a new applicant at &lt;code&gt;&lt;a href="http://0.0.0.0:3000/#/applicant/new"&gt;http://0.0.0.0:3000/#/applicant/new&lt;/a&gt;&lt;/code&gt;&lt;/li&gt;
     &lt;li&gt;List applicants at &lt;code&gt;&lt;a href="http://0.0.0.0:3000/#/applicant"&gt;http://0.0.0.0:3000/#/applicant&lt;/a&gt;&lt;/code&gt;&lt;/li&gt;
     &lt;li&gt;Edit existing applicants by clicking on the links in the &lt;a href="http://0.0.0.0:3000/#/applicant"&gt;list&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;Show applicants in a &lt;a href="http://0.0.0.0:3000/#/analyse/applicant"&gt;grid report&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Show applicants in a &lt;a href="http://0.0.0.0:3000/#/report/applicant"&gt;grid report&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</code></pre>
 <p id="base-edit-html"><strong>public/partials/base-edit.html</strong></p>
 <pre><code ng-non-bindable="">&lt;div ng-controller="BaseCtrl"&gt;

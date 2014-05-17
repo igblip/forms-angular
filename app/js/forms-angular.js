@@ -18,8 +18,8 @@ var fng = angular.module( 'formsAngular'
 fng.run(['tele', function (tele) {
 
     tele.routes( 'form', 'fng/', [
-        { path: '/analyse/:modelName/:reportSchemaName', route: { templateUrl: 'partials/base-analysis.html'   }},
-        { path: '/analyse/:modelName',                   route: { templateUrl: 'partials/base-analysis.html'   }},
+        { path: '/report/:modelName/:reportSchemaName', route: { templateUrl: 'partials/base-analysis.html'   }},
+        { path: '/report/:modelName',                   route: { templateUrl: 'partials/base-analysis.html'   }},
         { path: '/:modelName/:id/edit',                  route: { templateUrl: 'partials/base-edit.html'       }},
         { path: '/:modelName/new',                       route: { templateUrl: 'partials/base-edit.html'       }},
         { path: '/:modelName',                           route: { templateUrl: 'partials/base-list.html'       }},

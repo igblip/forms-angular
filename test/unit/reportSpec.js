@@ -29,7 +29,7 @@ describe('Reports', function() {
                 $httpBackend = _$httpBackend_;
                 $httpBackend.whenGET('/api/report/collection/myReport').respond({'success':true, 'schema':{}, 'report':[{"_id":"F","count":11},{"_id":"M","count":6}]});
 
-                $location.$$path = '/fng/analyse/collection/myReport';
+                $location.$$path = '/fng/report/collection/myReport';
                 routeParamsStub = jasmine.createSpy('routeParamsStub');
                 routeParamsStub.modelName = 'collection';
                 routeParamsStub.reportSchemaName = 'myReport';

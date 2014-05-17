@@ -38,15 +38,15 @@ function ($scope, $routeParams, $modal, $filter, $data, $window, SubmissionsServ
 
     // state management cruft: needs to be refactored
     $scope.index = false;
-    $scope.analyse = false;
+    $scope.report = false;
     $scope.newRecord = false;
 
     var pathParts = tele.activePath().split('/');
     if (pathParts.lastIndexOf('index') === pathParts.length - 1) {
         $scope.index = true;
     }
-    if (pathParts.indexOf('analyse') !== -1) {
-        $scope.analyse = true;
+    if (pathParts.indexOf('report') !== -1) {
+        $scope.report = true;
     } else if (pathParts.indexOf('new') !== -1) {
         $scope.newRecord = true;
     } else if (pathParts.indexOf('edit') !== -1) {

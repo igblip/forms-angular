@@ -132,7 +132,7 @@ function ($compile, $rootScope, utils, $filter, tele) {
                         }
                         break;
                     case 'link' :
-                        value = '<a ng-href="/' + tele.link('form', [fieldInfo.ref, fieldInfo.form]) + '/{{ ' + modelString + '}}/edit">' + fieldInfo.linkText + '</a>';
+                        value = '<a ng-href="/' + tele.link('form', [fieldInfo.ref, fieldInfo.form, '{{' + modelString + '}}', 'edit']) + '">' + fieldInfo.linkText + '</a>';
                         break;
                     case 'radio' :
                         value = '';

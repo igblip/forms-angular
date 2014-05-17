@@ -84,11 +84,11 @@ function ($routeParams, $controller, $data, $filter, tele) {
                 scope.$on('$locationChangeSuccess', function (event, newUrl, oldUrl) {
 
                     scope.routing = $routeParams;
-                    scope.routing.analyse = scope.routing.id ? true : false;
+                    scope.routing.report = scope.routing.id ? true : false;
 
                     scope.items = [];
 
-                    if (scope.routing.analyse) {
+                    if (scope.routing.report) {
                         scope.contextMenu = 'Report';
                         scope.items = [
                             {
