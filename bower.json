@@ -39,7 +39,7 @@
     "jspdf": "*",
     "ng-ckeditor": "*",
     "components-font-awesome": "3.2.1",
-    "telepathic": "~0.0.12"
+    "telepathic": "*"
   },
   "resolutions": {
     "angular": "1.3.0-beta.5"
