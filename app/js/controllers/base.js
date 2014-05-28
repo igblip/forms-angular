@@ -1,7 +1,8 @@
 'use strict';
 
-formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'urlService',
-  function ($scope, $routeParams, $location, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, urlService) {
+
+formsAngular.controller('BaseCtrl', ['$scope', '$location', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'urlService',
+  function ($scope, $location, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, urlService) {
     var master = {};
     var fngInvalidRequired = 'fng-invalid-required';
     var sharedStuff = $data;
@@ -21,10 +22,12 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
     $scope.select2List = [];
     $scope.pageSize = 20;
     $scope.pagesLoaded = 0;
+
     angular.extend($scope, $locationParse($location.$$path));
 
     $scope.formPlusSlash = $scope.formName ? $scope.formName + '/' : '';
     $scope.modelNameDisplay = sharedStuff.modelNameDisplay || $filter('titleCase')($scope.modelName);
+
     $scope.generateEditUrl = function (obj) {
       return urlService.buildUrl($scope.modelName + '/' + $scope.formPlusSlash + obj._id + '/edit');
     };
@@ -171,8 +174,8 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
                       }).error(function () {
                         $location.path('/404');
                       });
-//                                } else {
-//                                    throw new Error('select2 initSelection called without a value');
+                 // } else {
+                 //     throw new Error('select2 initSelection called without a value');
                     }
                   },
                   ajax: {
@@ -261,14 +264,13 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
           formInstructions.readonly = true;
         }
         return formInstructions;
-      }
-      ;
+    };
 
     // TODO: Do this in form
     var basicInstructions = function (field, formData, prefix) {
       formData.name = prefix + field;
-//        formData.id = formData.id || 'f_' + prefix + field.replace(/\./g, '_');
-//        formData.label = (formData.hasOwnProperty('label') && formData.label) == null ? '' : (formData.label || $filter('titleCase')(field));
+      //        formData.id = formData.id || 'f_' + prefix + field.replace(/\./g, '_');
+      //        formData.label = (formData.hasOwnProperty('label') && formData.label) == null ? '' : (formData.label || $filter('titleCase')(field));
       return formData;
     };
 
@@ -378,9 +380,9 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
       return display;
     };
 
-// TODO: Think about nested arrays
-// This doesn't handle things like :
-// {a:"hhh",b:[{c:[1,2]},{c:[3,4]}]}
+    // TODO: Think about nested arrays
+    // This doesn't handle things like :
+    // {a:"hhh",b:[{c:[1,2]},{c:[3,4]}]}
     $scope.getListData = function (record, fieldName) {
       var nests = fieldName.split('.');
       for (var i = 0; i < nests.length; i++) {
@@ -538,25 +540,25 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
           }
         }
       }
-//        //if a hash is defined then make that the selected tab is displayed
-//        if ($scope.tabs.length > 0 && $location.hash()) {
-//            var tab = _.find($scope.tabs, function (atab) {
-//                return atab.title === $location.hash();
-//            });
-//
-//            if (tab) {
-//                for (var i = 0; i < $scope.tabs.length; i++) {
-//                    $scope.tabs[i].active = false;
-//                }
-//                tab.active = true;
-//            }
-//        }
-//
-//        //now add a hash for the active tab if none exists
-//        if ($scope.tabs.length > 0 && !$location.hash()) {
-//            console.log($scope.tabs[0]['title'])
-//            $location.hash($scope.tabs[0]['title']);
-//        }
+       // //if a hash is defined then make that the selected tab is displayed
+       // if ($scope.tabs.length > 0 && $location.hash()) {
+       //     var tab = _.find($scope.tabs, function (atab) {
+       //         return atab.title === $location.hash();
+       //     });
+
+       //     if (tab) {
+       //         for (var i = 0; i < $scope.tabs.length; i++) {
+       //             $scope.tabs[i].active = false;
+       //         }
+       //         tab.active = true;
+       //     }
+       // }
+
+       // //now add a hash for the active tab if none exists
+       // if ($scope.tabs.length > 0 && !$location.hash()) {
+       //     console.log($scope.tabs[0]['title'])
+       //     $location.hash($scope.tabs[0]['title']);
+       // }
 
       if (destList && destList.length === 0) {
         handleEmptyList(description, destList, destForm, source);
@@ -587,12 +589,15 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
     };
 
     $scope.scrollTheList = function () {
+      //TODO: must be removed to a standalone class and not use the routeparams
+      //SEE: http://binarymuse.github.io/ngInfiniteScroll/demo_async.html for example
+
       SubmissionsService.getPagedAndFilteredList($scope.modelName, {
-        aggregate: $routeParams.a,
-        find: $routeParams.f,
+        //aggregate: $routeParams.a,
+        //find: $routeParams.f,
         limit: $scope.pageSize,
         skip: $scope.pagesLoaded * $scope.pageSize,
-        order: $routeParams.o
+        //order: $routeParams.o
       })
         .success(function (data) {
           if (angular.isArray(data)) {
@@ -1131,10 +1136,10 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
     };
 
 
-// Convert foreign keys into their display for selects
-// Called when the model is read and when the lookups are read
+    // Convert foreign keys into their display for selects
+    // Called when the model is read and when the lookups are read
 
-// No support for nested schemas here as it is called from convertToAngularModel which does that
+    // No support for nested schemas here as it is called from convertToAngularModel which does that
     function convertForeignKeys(schemaElement, input, values, ids) {
       if (schemaElement.array) {
         var returnArray = [];
@@ -1149,10 +1154,10 @@ formsAngular.controller('BaseCtrl', ['$scope', '$routeParams', '$location', '$fi
       }
     }
 
-// Convert ids into their foreign keys
-// Called when saving the model
+    // Convert ids into their foreign keys
+    // Called when saving the model
 
-// No support for nested schemas here as it is called from convertToMongoModel which does that
+    // No support for nested schemas here as it is called from convertToMongoModel which does that
     function convertToForeignKeys(schemaElement, input, values, ids) {
       if (schemaElement.array) {
         var returnArray = [];

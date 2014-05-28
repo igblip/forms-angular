@@ -68,7 +68,16 @@
     </div>
         </div>
 </div>
+
+<!-- include this if you are using angular's router
 <div ng-view></div>
+-->
+
+<!-- include this if you are using angular-ui's state router
+-->
+<div ui-view></div>
+
+
 <footer class="footer">
     <p>Code licensed under <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
     <ul class="footer-links">
@@ -83,7 +92,15 @@
 <script type="text/javascript" src="/bower_components/jquery/jquery.js"></script>
 <script type="text/javascript" src="/bower_components/jquery-ui/ui/jquery-ui.js"></script>
 <script type="text/javascript" src="/bower_components/angular/angular.js"></script>
+
+<!-- include this if you are using angular's router
 <script type="text/javascript" src="/bower_components/angular-route/angular-route.js"></script>
+-->
+
+<!-- include this if you are using angular-ui's state router
+-->
+<script type="text/javascript" src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+
 <script type="text/javascript" src="/bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script type="text/javascript" src="/bower_components/underscore/underscore.js"></script>
 <script type="text/javascript" src="/bower_components/angular-ui-bootstrap-bower/ui-bootstrap-tpls.js"></script>
@@ -116,7 +133,15 @@
 <script src="/js/services/location-parse.js"></script>
 <script src="/js/services/data.js"></script>
 <script src="/js/services/url-utils.js"></script>
+
+<!-- include this if you are using angular's router
 <script src="/js/services/form-routes.js"></script>
+-->
+
+<!-- include this if you are using angular-ui's state router
+-->
+<script src="/js/services/form-states.js"></script>
+
 <script src="/js/services/utils.js"></script>
 <script src="/js/services/schemas.js"></script>
 <script src="/js/services/submissions.js"></script>
@@ -139,6 +164,16 @@
 <!--Demo application stuff-->
 <!-- build:js scripts/app.js -->
 <script src="/demo/demo.js"></script>
+
+<!-- include this if you are using angular's router
+    <script src="/demo/demo-routes.js"></script>
+-->
+
+<!-- include this if you are using angular-ui's state router
+-->
+<script src="/demo//demo-states.js"></script>
+
+
 <script src="/demo/directives/bespoke-field.js"></script>
 <script src="/demo/directives/affix.js"></script>
 <script src="/demo/directives/friends.js"></script>
