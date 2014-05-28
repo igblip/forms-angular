@@ -1,6 +1,6 @@
 'use strict';
 
-formsAngular.provider('formRoutes', ['$routeProvider', function ($routeProvider) {
+formsAngular.provider('formUrls', ['$routeProvider', function ($routeProvider) {
 
   var _fngRoutes = [
     {route: '/analyse/:model/:reportSchemaName',  options: {templateUrl: 'partials/base-analysis.html'}},
@@ -34,8 +34,12 @@ formsAngular.provider('formRoutes', ['$routeProvider', function ($routeProvider)
       _setRoutes(_fngRoutes);
       _setDefaultRoute(defaultRoute);
     },
-    $get: function () {
-      return null;
-    }
+    $get: ['$routeParams', function ($routeParams) {
+      return {
+        params: function () {
+          return $routeParams;
+        }
+      };
+    }]
   };
 }]);

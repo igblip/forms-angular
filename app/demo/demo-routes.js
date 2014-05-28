@@ -2,7 +2,7 @@
 
 var myDemoApp = angular.module('myDemoApp');
 
-myDemoApp.config(['formRoutesProvider', function (formRoutes) {
+myDemoApp.config(['formUrlsProvider', function (formRoutes) {
   formRoutes.setRoutes([
     {route: '/index',                         options: {templateUrl: 'partials/landing-page.html'}},
     {route: '/get-started',                   options: {templateUrl: 'partials/get-started.html'}},

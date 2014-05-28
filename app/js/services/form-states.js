@@ -1,6 +1,6 @@
 'use strict';
 
-formsAngular.provider('formStates', ['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+formsAngular.provider('formUrls', ['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
   var _fngStates = [
     {name: 'fng',         options: { url: '/:model',                templateUrl: 'partials/base-list.html'}},
@@ -35,9 +35,13 @@ formsAngular.provider('formStates', ['$stateProvider', '$urlRouterProvider', fun
       _setStates(_fngStates);
       _setDefaultRoute(defaultRoute);
     },
-    $get: function () {
-      return null;
-    }
+    $get: ['$stateParams', function ($stateParams) {
+      return {
+        params: function () {
+          return $stateParams;
+        }
+      };
+    }]
   };
 }]);
 

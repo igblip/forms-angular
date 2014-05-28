@@ -2,7 +2,7 @@
 
 var myDemoApp = angular.module('myDemoApp');
 
-myDemoApp.config(['formStatesProvider', function (formStates) {
+myDemoApp.config(['formUrlsProvider', function (formStates) {
   formStates.setStates([
     {name: 'index',            options: { url: '/index',             templateUrl: 'partials/landing-page.html'}},
     {name: 'get-started',      options: { url: '/get-started',       templateUrl: 'partials/get-started.html'}},

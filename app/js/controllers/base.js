@@ -1,8 +1,8 @@
 'use strict';
 
 
-formsAngular.controller('BaseCtrl', ['$scope', '$location', '$filter', '$data', '$locationParse', '$modal', '$window', 'SubmissionsService', 'SchemasService', 'urlService',
-  function ($scope, $location, $filter, $data, $locationParse, $modal, $window, SubmissionsService, SchemasService, urlService) {
+formsAngular.controller('BaseCtrl', ['$scope', '$location', '$filter', '$data', '$locationParse', '$modal', '$window', 'formUrls', 'SubmissionsService', 'SchemasService', 'urlService',
+  function ($scope, $location, $filter, $data, $locationParse, $modal, $window, formUrls, SubmissionsService, SchemasService, urlService) {
     var master = {};
     var fngInvalidRequired = 'fng-invalid-required';
     var sharedStuff = $data;
@@ -592,12 +592,14 @@ formsAngular.controller('BaseCtrl', ['$scope', '$location', '$filter', '$data', 
       //TODO: must be removed to a standalone class and not use the routeparams
       //SEE: http://binarymuse.github.io/ngInfiniteScroll/demo_async.html for example
 
+      var params = formUrls.params();
+
       SubmissionsService.getPagedAndFilteredList($scope.modelName, {
-        //aggregate: $routeParams.a,
-        //find: $routeParams.f,
+        aggregate: params.a,
+        find: params.f,
         limit: $scope.pageSize,
         skip: $scope.pagesLoaded * $scope.pageSize,
-        //order: $routeParams.o
+        order: params.o
       })
         .success(function (data) {
           if (angular.isArray(data)) {
